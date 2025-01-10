@@ -2,5 +2,12 @@
     <string name="app_name">poop-bags</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_profile">Profile</string>
+    <string name="favourites">favourites</string>
+    <string name="welcome_user">Welcome, %1$s</string>
+    <string name="posts">posts</string>
+    <string name="username_placeholder">username placeholder</string>
+    <string name="edit_profile">edit profile</string>
+    <string name="profile_picture">profile picture</string>
+    <string name="profile_image">profile image</string>
 </resources>

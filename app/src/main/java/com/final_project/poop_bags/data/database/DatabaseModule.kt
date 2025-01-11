@@ -2,7 +2,7 @@ package com.final_project.poop_bags.data.database
 
 import android.content.Context
 import androidx.room.Room
-import com.final_project.poop_bags.data.dao.UserDao
+import com.final_project.poop_bags.data.local.dao.UserDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

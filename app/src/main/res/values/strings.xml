@@ -10,4 +10,11 @@
     <string name="edit_profile">edit profile</string>
     <string name="profile_picture">profile picture</string>
     <string name="profile_image">profile image</string>
+    <string name="username_required">username required</string>
+    <string name="invalid_email">invalid_email</string>
+    <string name="username">username</string>
+    <string name="email">email</string>
+    <string name="save">save</string>
+    <string name="choose_image_source">choose image source</string>
+    <string name="image_sources">image sources</string>
 </resources>

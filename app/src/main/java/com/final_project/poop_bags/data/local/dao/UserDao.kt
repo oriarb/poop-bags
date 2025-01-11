@@ -1,4 +1,4 @@
-package com.final_project.poop_bags.data.dao
+package com.final_project.poop_bags.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert

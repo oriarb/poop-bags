@@ -3,7 +3,7 @@ package com.final_project.poop_bags.data.repository
 import android.net.Uri
 import com.final_project.poop_bags.data.ImageCache
 import com.final_project.poop_bags.data.models.UserProfile
-import com.final_project.poop_bags.data.dao.UserDao
+import com.final_project.poop_bags.data.local.dao.UserDao
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers

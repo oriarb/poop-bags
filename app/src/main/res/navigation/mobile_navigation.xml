@@ -18,8 +18,39 @@
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.final_project.poop_bags.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/editProfileFragment"
+        android:name="com.final_project.poop_bags.ui.editProfileFragment.EditProfileFragment"
+        android:label="@string/edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
+
+    <fragment
+        android:id="@+id/favouritesFragment"
+        android:name="com.final_project.poop_bags.ui.favouritesFragment"
+        tools:layout="@layout/fragment_favourites" />
+
+    <fragment
+        android:id="@+id/postsFragment"
+        android:name="com.final_project.poop_bags.ui.postsFragment"
+        tools:layout="@layout/fragment_posts" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.final_project.poop_bags.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile">
+        
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_profileFragment_to_favouritesFragment"
+            app:destination="@id/favouritesFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_postsFragment"
+            app:destination="@id/postsFragment" />
+    </fragment>
 </navigation>

@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="profile_background">#FF2C2C2C</color>
     <color name="card_background">#FF3C3C3C</color>
+    <color name="light_gray_background">#303030</color>
+    <color name="dark_input_background">#484848</color>
 </resources>

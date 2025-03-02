@@ -2,6 +2,8 @@ package com.final_project.poop_bags.data.database
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.final_project.poop_bags.data.local.dao.UserDao
 import dagger.Module
 import dagger.Provides
@@ -23,7 +25,15 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "poop_bags_db"
-        ).build()
+        )
+        .addMigrations(MIGRATION_1_2)
+        .build()
+    }
+
+    private val MIGRATION_1_2 = object : Migration(1, 2) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE user_profiles ADD COLUMN email TEXT NOT NULL DEFAULT ''")
+        }
     }
 
     @Provides

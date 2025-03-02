@@ -10,5 +10,7 @@ data class UserProfile(
     val username: String,
     val profilePicture: String?,
     val favouritesCount: Int = 0,
-    val postsCount: Int = 0
+    val postsCount: Int = 0,
+    val email: String
+
 )

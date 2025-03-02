@@ -14,6 +14,9 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUserProfile(userProfile: UserProfile)
 
+    @Query("UPDATE user_profiles SET username = :username, email = :email, profilePicture = :profilePicture WHERE userId = :userId")
+    suspend fun updateUserProfile(userId: String, username: String, email: String, profilePicture: String?)
+
     @Query("UPDATE user_profiles SET profilePicture = :pictureUri")
     suspend fun updateProfilePicture(pictureUri: String?)
 } 

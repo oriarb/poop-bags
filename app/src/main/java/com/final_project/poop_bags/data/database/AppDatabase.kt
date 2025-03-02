@@ -7,7 +7,7 @@ import com.final_project.poop_bags.data.local.dao.UserDao
 
 @Database(
     entities = [UserProfile::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -19,11 +19,19 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun updateProfilePicture(uri: Uri) {
-        try {
-            val cachedImagePath = imageCache.cacheImage(uri)
-            userDao.updateProfilePicture(cachedImagePath)
-        } catch (e: Exception) {
-            throw IllegalStateException("Failed to update profile picture", e)
+        withContext(Dispatchers.IO) {
+            try {
+                val cachedImagePath = imageCache.cacheImage(uri)
+                val currentProfile = getUserProfile()
+                userDao.updateUserProfile(
+                    userId = currentProfile.userId,
+                    username = currentProfile.username,
+                    email = currentProfile.email,
+                    profilePicture = cachedImagePath
+                )
+            } catch (e: Exception) {
+                throw IllegalStateException("Failed to update profile picture", e)
+            }
         }
     }
 
@@ -38,11 +46,26 @@ class UserRepository @Inject constructor(
         }
     }
 
+    suspend fun updateUserProfile(username: String, email: String) {
+        withContext(Dispatchers.IO) {
+            val currentProfile = getUserProfile()
+            userDao.updateUserProfile(
+                userId = currentProfile.userId,
+                username = username,
+                email = email,
+                profilePicture = currentProfile.profilePicture
+            )
+        }
+    }
+
     private suspend fun createDefaultProfile(): UserProfile {
         val defaultProfile = UserProfile(
             userId = "default",
             username = "Guest",
-            profilePicture = null
+            email = "guest12@gmail.com",
+            profilePicture = null,
+            favouritesCount = 0,
+            postsCount = 0
         )
         userDao.insertUserProfile(defaultProfile)
         return defaultProfile

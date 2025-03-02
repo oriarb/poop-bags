@@ -43,9 +43,6 @@ android {
 
 kapt {
     correctErrorTypes = true
-    arguments {
-        arg("dagger.hilt.android.internal.disableAndroidSuperclassValidation", "true")
-    }
 }
 
 hilt {
@@ -62,6 +59,7 @@ dependencies {
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
     // Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")

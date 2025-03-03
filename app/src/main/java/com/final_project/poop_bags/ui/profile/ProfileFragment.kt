@@ -33,7 +33,7 @@ class ProfileFragment : Fragment() {
                 id = View.generateViewId(),
                 textRes = R.string.favourites
             ) {
-                // לוגיקה למעבר למסך המועדפים
+                findNavController().navigate(R.id.action_navigation_profile_to_favouritesFragment)
             },
             ProfileButton(
                 id = View.generateViewId(),

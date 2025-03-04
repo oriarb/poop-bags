@@ -14,7 +14,7 @@
             android:id="@+id/postImage"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:contentDescription="@string/title_profile"
+            android:contentDescription="@string/post_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,7 +26,7 @@
             android:layout_marginEnd="16dp"
             android:textSize="18sp"
             android:textColor="@color/white"
-            app:layout_constraintEnd_toStartOf="@id/favoriteButton"
+            app:layout_constraintEnd_toStartOf="@id/buttonsContainer"
             app:layout_constraintStart_toEndOf="@id/postImage"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -56,16 +56,47 @@
                 app:drawableStartCompat="@drawable/ic_comment" />
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/favoriteButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/favourites"
-            android:src="@drawable/ic_star_filled"
+        <LinearLayout
+            android:id="@+id/buttonsContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/yellow" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/favoriteButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/favourites"
+                android:src="@drawable/ic_star_filled"
+                android:visibility="gone"
+                app:tint="@color/yellow" />
+
+            <ImageButton
+                android:id="@+id/deleteButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/delete"
+                android:src="@drawable/ic_delete"
+                android:visibility="gone"
+                app:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/editButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/edit_profile"
+                android:src="@drawable/ic_edit"
+                android:visibility="gone"
+                app:tint="@color/white" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </merge> 

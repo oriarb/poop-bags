@@ -1,6 +1,6 @@
 package com.final_project.poop_bags.ui.favorites
 
-import FavoriteItemView
+import PostItemView
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -67,16 +67,18 @@ class FavoritesFragment : Fragment() {
             binding.scrollView.visibility = View.VISIBLE
             
             posts.forEach { post ->
-                val favoriteItem = FavoriteItemView(requireContext()).apply {
+                val favoriteItem = PostItemView(requireContext()).apply {
                     layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     ).apply {
                         setMargins(0, 0, 0, 16)
                     }
-                    bind(post) { 
-                        viewModel.removeFromFavorites(it)
-                    }
+                    bind(
+                        post = post,
+                        config = PostItemView.ViewConfig(isFavorite = true),
+                        onFavoriteClick = { viewModel.removeFromFavorites(it) }
+                    )
                 }
                 binding.favoritesContainer.addView(favoriteItem)
             }

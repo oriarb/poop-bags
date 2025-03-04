@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.final_project.poop_bags.data.local.dao.UserDao
+import com.final_project.poop_bags.data.local.dao.PostDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,7 +27,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "poop_bags_db"
         )
-        .addMigrations(MIGRATION_1_2)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
         .build()
     }
 
@@ -36,8 +37,30 @@ object DatabaseModule {
         }
     }
 
+    private val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("""
+                CREATE TABLE IF NOT EXISTS posts (
+                    postId TEXT PRIMARY KEY NOT NULL,
+                    title TEXT NOT NULL,
+                    imageUrl TEXT NOT NULL,
+                    likesCount INTEGER NOT NULL DEFAULT 0,
+                    commentsCount INTEGER NOT NULL DEFAULT 0,
+                    isFavorite INTEGER NOT NULL DEFAULT 0
+                )
+            """)
+        }
+    }
+
     @Provides
+    @Singleton
     fun provideUserDao(database: AppDatabase): UserDao {
         return database.userDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providePostDao(database: AppDatabase): PostDao {
+        return database.postDao()
     }
 } 

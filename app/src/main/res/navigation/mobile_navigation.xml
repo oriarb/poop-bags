@@ -25,8 +25,9 @@
 
     <fragment
         android:id="@+id/favouritesFragment"
-        android:name="com.final_project.poop_bags.ui.favouritesFragment"
-        tools:layout="@layout/fragment_favourites" />
+        android:name="com.final_project.poop_bags.ui.favorites.FavoritesFragment"
+        android:label="@string/favourites"
+        tools:layout="@layout/fragment_favorites" />
 
     <fragment
         android:id="@+id/postsFragment"
@@ -52,5 +53,8 @@
         <action
             android:id="@+id/action_profileFragment_to_postsFragment"
             app:destination="@id/postsFragment" />
+        <action
+            android:id="@+id/action_navigation_profile_to_favouritesFragment"
+            app:destination="@id/favouritesFragment" />
     </fragment>
 </navigation>

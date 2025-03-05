@@ -12,7 +12,8 @@ import kotlinx.coroutines.withContext
 @Singleton
 class PostRepository @Inject constructor(
     private val postDao: PostDao,
-    private val imageCache: ImageCache
+    private val imageCache: ImageCache,
+    private val userRepository: UserRepository
 ) {
     fun getFavoritePosts(): Flow<List<Post>> {
         return postDao.getFavoritePosts()
@@ -29,11 +30,13 @@ class PostRepository @Inject constructor(
 
     suspend fun addSamplePosts() {
         withContext(Dispatchers.IO) {
+            val currentUser = userRepository.getUserProfile()
             postDao.deleteAllPosts()
             
             val samplePosts = listOf(
                 Post(
                     postId = "sample_1",
+                    userId = currentUser.userId,
                     title = "דוגמה ראשונה",
                     imageUrl = "https://example.com/sample1.jpg",
                     likesCount = 5,
@@ -42,6 +45,7 @@ class PostRepository @Inject constructor(
                 ),
                 Post(
                     postId = "sample_2",
+                    userId = currentUser.userId,
                     title = "דוגמה שנייה",
                     imageUrl = "https://example.com/sample2.jpg",
                     likesCount = 3,
@@ -64,7 +68,8 @@ class PostRepository @Inject constructor(
                 imageUrl = imageUrl,
                 likesCount = 0,
                 commentsCount = 0,
-                isFavorite = false
+                isFavorite = false,
+                userId = "user_1"
             )
             postDao.insertPost(newPost)
         }
@@ -72,5 +77,15 @@ class PostRepository @Inject constructor(
 
     private fun generatePostId(): String {
         return "post_${System.currentTimeMillis()}"
+    }
+
+    fun getUserPosts(userId: String): Flow<List<Post>> {
+        return postDao.getUserPosts(userId)
+    }
+
+    suspend fun deletePost(postId: String) {
+        withContext(Dispatchers.IO) {
+            postDao.deletePost(postId)
+        }
     }
 } 

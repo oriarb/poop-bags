@@ -23,4 +23,10 @@ interface PostDao {
     
     @Query("DELETE FROM posts")
     suspend fun deleteAllPosts()
+    
+    @Query("SELECT * FROM posts WHERE userId = :userId")
+    fun getUserPosts(userId: String): Flow<List<Post>>
+    
+    @Query("DELETE FROM posts WHERE postId = :postId")
+    suspend fun deletePost(postId: String)
 } 

@@ -31,7 +31,8 @@
 
     <fragment
         android:id="@+id/postsFragment"
-        android:name="com.final_project.poop_bags.ui.postsFragment"
+        android:name="com.final_project.poop_bags.ui.posts.PostsFragment"
+        android:label="@string/posts"
         tools:layout="@layout/fragment_posts" />
 
     <fragment

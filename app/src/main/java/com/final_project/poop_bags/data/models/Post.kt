@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class Post(
     @PrimaryKey
     val postId: String,
+    val userId: String,
     val title: String,
     val imageUrl: String,
     val likesCount: Int = 0,

@@ -70,4 +70,8 @@ class UserRepository @Inject constructor(
         userDao.insertUserProfile(defaultProfile)
         return defaultProfile
     }
+
+    suspend fun getCurrentUserId(): String {
+        return getUserProfile().userId
+    }
 }

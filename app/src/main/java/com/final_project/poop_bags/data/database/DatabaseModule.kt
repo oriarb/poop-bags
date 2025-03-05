@@ -39,9 +39,12 @@ object DatabaseModule {
 
     private val MIGRATION_2_3 = object : Migration(2, 3) {
         override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("DROP TABLE IF EXISTS posts")
+            
             db.execSQL("""
-                CREATE TABLE IF NOT EXISTS posts (
+                CREATE TABLE posts (
                     postId TEXT PRIMARY KEY NOT NULL,
+                    userId TEXT NOT NULL,
                     title TEXT NOT NULL,
                     imageUrl TEXT NOT NULL,
                     likesCount INTEGER NOT NULL DEFAULT 0,

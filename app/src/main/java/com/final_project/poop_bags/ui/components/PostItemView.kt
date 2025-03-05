@@ -41,7 +41,6 @@ class PostItemView @JvmOverloads constructor(
                 .centerCrop()
                 .into(postImage)
 
-            // Configure buttons visibility and click listeners
             favoriteButton.apply {
                 visibility = if (config.isFavorite) View.VISIBLE else View.GONE
                 setOnClickListener { onFavoriteClick?.invoke(post) }

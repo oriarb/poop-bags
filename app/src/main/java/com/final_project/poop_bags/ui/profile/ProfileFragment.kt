@@ -39,7 +39,7 @@ class ProfileFragment : Fragment() {
                 id = View.generateViewId(),
                 textRes = R.string.posts
             ) {
-                // לוגיקה למעבר למסך הפוסטים
+                findNavController().navigate(R.id.action_profileFragment_to_postsFragment)
             }
         )
     }

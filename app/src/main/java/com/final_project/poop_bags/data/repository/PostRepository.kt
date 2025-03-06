@@ -5,6 +5,8 @@ import com.final_project.poop_bags.data.ImageCache
 import com.final_project.poop_bags.data.models.Post
 import com.final_project.poop_bags.data.local.dao.PostDao
 import com.final_project.poop_bags.data.models.PostLike
+import com.final_project.poop_bags.data.local.dao.PostFavoriteDao
+import com.final_project.poop_bags.data.models.PostFavorite
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -12,23 +14,34 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.emitAll
 
 @Singleton
 class PostRepository @Inject constructor(
     private val postDao: PostDao,
     private val postLikeDao: PostLikeDao,
+    private val postFavoriteDao: PostFavoriteDao,
     private val imageCache: ImageCache,
     private val userRepository: UserRepository
 ) {
-    fun getFavoritePosts(): Flow<List<Post>> {
-        return postDao.getFavoritePosts()
-    }
+    fun getFavoritePosts(): Flow<List<Post>> = flow {
+        val userId = userRepository.getCurrentUserId()
+        emitAll(postFavoriteDao.getFavoritePosts(userId))
+    }.flowOn(Dispatchers.IO)
 
     suspend fun toggleFavorite(postId: String) {
         withContext(Dispatchers.IO) {
-            val post = postDao.getPostById(postId)
-            post?.let {
-                postDao.updateFavoriteStatus(postId, !it.isFavorite)
+            val userId = userRepository.getCurrentUserId()
+            val existingFavorite = postFavoriteDao.getFavorite(postId, userId)
+            
+            if (existingFavorite != null) {
+                postFavoriteDao.deleteFavorite(existingFavorite)
+            } else {
+                val newFavorite = PostFavorite(
+                    postId = postId,
+                    userId = userId
+                )
+                postFavoriteDao.insertFavorite(newFavorite)
             }
         }
     }
@@ -42,19 +55,37 @@ class PostRepository @Inject constructor(
                 Post(
                     postId = "sample_1",
                     userId = currentUser.userId,
-                    title = "דוגמה ראשונה",
-                    imageUrl = "https://example.com/sample1.jpg",
-                    likesCount = 0,
+                    title = "הכלב שלי אוהב לשחק בפארק",
+                    imageUrl = "https://images.dog.ceo/breeds/retriever-golden/n02099601_1024.jpg",
+                    likesCount = 5,
                     commentsCount = 2,
-                    isFavorite = true
+                    isFavorite = false
                 ),
                 Post(
                     postId = "sample_2",
                     userId = currentUser.userId,
-                    title = "דוגמה שנייה",
-                    imageUrl = "https://example.com/sample2.jpg",
-                    likesCount = 0,
+                    title = "טיול בוקר מושלם",
+                    imageUrl = "https://images.dog.ceo/breeds/mountain-swiss/n02107574_1346.jpg",
+                    likesCount = 3,
                     commentsCount = 1,
+                    isFavorite = false
+                ),
+                Post(
+                    postId = "sample_3",
+                    userId = currentUser.userId,
+                    title = "הכירו את מקס החדש שלי",
+                    imageUrl = "https://images.dog.ceo/breeds/husky/n02110185_10047.jpg",
+                    likesCount = 8,
+                    commentsCount = 4,
+                    isFavorite = false
+                ),
+                Post(
+                    postId = "sample_4",
+                    userId = currentUser.userId,
+                    title = "יום כיף בחוף הים",
+                    imageUrl = "https://images.dog.ceo/breeds/retriever-chesapeake/n02099849_1830.jpg",
+                    likesCount = 12,
+                    commentsCount = 6,
                     isFavorite = false
                 )
             )
@@ -62,6 +93,26 @@ class PostRepository @Inject constructor(
             samplePosts.forEach { post ->
                 postDao.insertPost(post)
             }
+
+            // הוספת לייקים לדוגמה
+            postLikeDao.insertLike(PostLike(
+                postId = "sample_1",
+                userId = currentUser.userId
+            ))
+            postLikeDao.insertLike(PostLike(
+                postId = "sample_3",
+                userId = currentUser.userId
+            ))
+
+            // הוספת מועדפים לדוגמה
+            postFavoriteDao.insertFavorite(PostFavorite(
+                postId = "sample_2",
+                userId = currentUser.userId
+            ))
+            postFavoriteDao.insertFavorite(PostFavorite(
+                postId = "sample_4",
+                userId = currentUser.userId
+            ))
         }
     }
 
@@ -127,4 +178,10 @@ class PostRepository @Inject constructor(
     fun getPostLikesCount(postId: String): Flow<Int> {
         return postLikeDao.getLikesCount(postId)
     }
+
+    fun isPostFavorite(postId: String): Flow<Boolean> = flow {
+        val userId = userRepository.getCurrentUserId()
+        val favorite = postFavoriteDao.getFavorite(postId, userId)
+        emit(favorite != null)
+    }.flowOn(Dispatchers.IO)
 }

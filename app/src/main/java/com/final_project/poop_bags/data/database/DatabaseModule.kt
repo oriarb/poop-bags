@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.final_project.poop_bags.data.local.dao.UserDao
 import com.final_project.poop_bags.data.local.dao.PostDao
 import com.final_project.poop_bags.data.local.dao.PostLikeDao
+import com.final_project.poop_bags.data.local.dao.PostFavoriteDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,7 +29,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "poop_bags_db"
         )
-        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
         .build()
     }
 
@@ -58,10 +59,8 @@ object DatabaseModule {
 
     private val MIGRATION_3_4 = object : Migration(3, 4) {
         override fun migrate(db: SupportSQLiteDatabase) {
-            // Drop existing table if exists
             db.execSQL("DROP TABLE IF EXISTS post_likes")
             
-            // Create new post_likes table
             db.execSQL("""
                 CREATE TABLE post_likes (
                     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -72,8 +71,22 @@ object DatabaseModule {
                 )
             """)
             
-            // Create index on postId
             db.execSQL("CREATE INDEX index_post_likes_postId ON post_likes(postId)")
+        }
+    }
+
+    private val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("""
+                CREATE TABLE IF NOT EXISTS post_favorites (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    postId TEXT NOT NULL,
+                    userId TEXT NOT NULL,
+                    timestamp INTEGER NOT NULL,
+                    FOREIGN KEY(postId) REFERENCES posts(postId) ON DELETE CASCADE
+                )
+            """)
+            db.execSQL("CREATE INDEX IF NOT EXISTS index_post_favorites_postId ON post_favorites(postId)")
         }
     }
 
@@ -93,5 +106,11 @@ object DatabaseModule {
     @Singleton
     fun providePostLikeDao(database: AppDatabase): PostLikeDao {
         return database.postLikeDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providePostFavoriteDao(database: AppDatabase): PostFavoriteDao {
+        return database.postFavoriteDao()
     }
 } 

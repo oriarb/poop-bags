@@ -1,4 +1,4 @@
-package com.final_project.poop_bags.ui.favorites
+package com.final_project.poop_bags.ui.posts
 
 import PostItemView
 import android.os.Bundle
@@ -12,71 +12,89 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.final_project.poop_bags.R
+import com.final_project.poop_bags.databinding.FragmentPostsBinding
 import com.final_project.poop_bags.data.models.Post
-import com.final_project.poop_bags.databinding.FragmentFavoritesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FavoritesFragment : Fragment() {
-
-    private var _binding: FragmentFavoritesBinding? = null
+class PostsFragment : Fragment() {
+    private var _binding: FragmentPostsBinding? = null
     private val binding get() = _binding!!
-    
-    private val viewModel: FavoritesViewModel by viewModels()
+    private val viewModel: PostsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        _binding = FragmentPostsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupUI()
-        observeViewModel()
+        observePosts()
     }
 
     private fun setupUI() {
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
         }
+        
+        binding.progressBar.visibility = View.VISIBLE
+        binding.emptyStateText.visibility = View.GONE
+        binding.scrollView.visibility = View.GONE
     }
 
-    private fun observeViewModel() {
+    private fun observePosts() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.favoritePosts.collect { posts ->
-                    updateFavoritesList(posts)
+                try {
+                    viewModel.userPosts.collect { posts ->
+                        binding.progressBar.visibility = View.GONE
+                        updatePostsList(posts)
+                    }
+                } catch (e: Exception) {
+                    binding.progressBar.visibility = View.GONE
+                    binding.emptyStateText.text = getString(R.string.error_loading_posts)
+                    binding.emptyStateText.visibility = View.VISIBLE
+                    binding.scrollView.visibility = View.GONE
                 }
             }
         }
     }
 
-    private fun updateFavoritesList(posts: List<Post>) {
-        binding.favoritesContainer.removeAllViews()
+    private fun updatePostsList(posts: List<Post>) {
+        if (!isAdded) return 
+        
+        binding.postsContainer.removeAllViews()
         
         if (posts.isEmpty()) {
             binding.emptyStateText.visibility = View.VISIBLE
             binding.scrollView.visibility = View.GONE
+            binding.emptyStateText.text = getString(R.string.no_posts)
         } else {
             binding.emptyStateText.visibility = View.GONE
             binding.scrollView.visibility = View.VISIBLE
             
             posts.forEach { post ->
-                val favoriteItem = PostItemView(requireContext()).apply {
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        setMargins(0, 0, 0, 16)
+                try {
+                    val postItem = PostItemView(requireContext()).apply {
+                        layoutParams = LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            setMargins(0, 0, 0, 16)
+                        }
                     }
+                    binding.postsContainer.addView(postItem)
+                    bindPost(post, postItem)
+                } catch (e: Exception) {
+                    // Handle error for individual post
                 }
-                binding.favoritesContainer.addView(favoriteItem)
-                bindPost(post, favoriteItem)
             }
         }
     }
@@ -88,10 +106,12 @@ class FavoritesFragment : Fragment() {
                     postItem.bind(
                         post = post,
                         config = PostItemView.ViewConfig(
-                            isFavorite = true,
+                            isDelete = true,
+                            isEdit = true,
                             isLikeEnabled = true
                         ),
-                        onFavoriteClick = { viewModel.removeFromFavorites(it) },
+                        onDeleteClick = { viewModel.deletePost(it) },
+                        onEditClick = { /* נוסיף בהמשך */ },
                         onLikeClick = { viewModel.toggleLike(it) },
                         isLiked = isLiked
                     )

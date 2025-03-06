@@ -21,4 +21,12 @@
     <string name="enter_username">Enter username</string>
     <string name="enter_email">Enter email address</string>
     <string name="no_favorites">No favorite posts yet</string>
+    <string name="post_image">Post image</string>
+    <string name="no_posts">No posts yet</string>
+    <string name="my_posts">My Posts</string>
+    <string name="likes_count">%d likes</string>
+    <string name="delete">Delete</string>
+    <string name="error_loading_posts">Error loading posts</string>
+    <string name="like_button">Like</string>
+    <string name="commentButton">comment</string>
 </resources>

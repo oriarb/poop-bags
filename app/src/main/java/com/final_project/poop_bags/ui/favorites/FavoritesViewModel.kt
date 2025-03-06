@@ -9,18 +9,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
     private val repository: PostRepository
 ) : ViewModel() {
- 
-    init {
-        viewModelScope.launch {
-            repository.addSamplePosts()
-        }
-    }
-
+    
     val favoritePosts = repository.getFavoritePosts()
         .stateIn(
             scope = viewModelScope,
@@ -33,4 +28,12 @@ class FavoritesViewModel @Inject constructor(
             repository.toggleFavorite(post.postId)
         }
     }
+
+    fun toggleLike(post: Post) {
+        viewModelScope.launch {
+            repository.toggleLike(post.postId)
+        }
+    }
+
+    fun isPostLiked(postId: String): Flow<Boolean> = repository.isPostLiked(postId)
 } 

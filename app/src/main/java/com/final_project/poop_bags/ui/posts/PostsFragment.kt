@@ -89,19 +89,32 @@ class PostsFragment : Fragment() {
                         ).apply {
                             setMargins(0, 0, 0, 16)
                         }
-                        bind(
-                            post = post,
-                            config = PostItemView.ViewConfig(
-                                isDelete = true,
-                                isEdit = true
-                            ),
-                            onDeleteClick = { viewModel.deletePost(it) },
-                            onEditClick = { /* נוסיף בהמשך */ }
-                        )
                     }
                     binding.postsContainer.addView(postItem)
+                    bindPost(post, postItem)
                 } catch (e: Exception) {
                     // Handle error for individual post
+                }
+            }
+        }
+    }
+
+    private fun bindPost(post: Post, postItem: PostItemView) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isPostLiked(post.postId).collect { isLiked ->
+                    postItem.bind(
+                        post = post,
+                        config = PostItemView.ViewConfig(
+                            isDelete = true,
+                            isEdit = true,
+                            isLikeEnabled = true
+                        ),
+                        onDeleteClick = { viewModel.deletePost(it) },
+                        onEditClick = { /* נוסיף בהמשך */ },
+                        onLikeClick = { viewModel.toggleLike(it) },
+                        isLiked = isLiked
+                    )
                 }
             }
         }

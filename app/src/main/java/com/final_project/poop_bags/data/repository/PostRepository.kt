@@ -1,17 +1,22 @@
 package com.final_project.poop_bags.data.repository
 
+import com.final_project.poop_bags.data.local.dao.PostLikeDao
 import com.final_project.poop_bags.data.ImageCache
 import com.final_project.poop_bags.data.models.Post
 import com.final_project.poop_bags.data.local.dao.PostDao
+import com.final_project.poop_bags.data.models.PostLike
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 @Singleton
 class PostRepository @Inject constructor(
     private val postDao: PostDao,
+    private val postLikeDao: PostLikeDao,
     private val imageCache: ImageCache,
     private val userRepository: UserRepository
 ) {
@@ -39,7 +44,7 @@ class PostRepository @Inject constructor(
                     userId = currentUser.userId,
                     title = "דוגמה ראשונה",
                     imageUrl = "https://example.com/sample1.jpg",
-                    likesCount = 5,
+                    likesCount = 0,
                     commentsCount = 2,
                     isFavorite = true
                 ),
@@ -48,7 +53,7 @@ class PostRepository @Inject constructor(
                     userId = currentUser.userId,
                     title = "דוגמה שנייה",
                     imageUrl = "https://example.com/sample2.jpg",
-                    likesCount = 3,
+                    likesCount = 0,
                     commentsCount = 1,
                     isFavorite = false
                 )
@@ -69,7 +74,7 @@ class PostRepository @Inject constructor(
                 likesCount = 0,
                 commentsCount = 0,
                 isFavorite = false,
-                userId = "user_1"
+                userId = userRepository.getCurrentUserId()
             )
             postDao.insertPost(newPost)
         }
@@ -88,4 +93,38 @@ class PostRepository @Inject constructor(
             postDao.deletePost(postId)
         }
     }
-} 
+
+    suspend fun toggleLike(postId: String) {
+        withContext(Dispatchers.IO) {
+            val userId = userRepository.getCurrentUserId()
+            val existingLike = postLikeDao.getLike(postId, userId)
+            val post = postDao.getPostById(postId)
+            
+            if (existingLike != null) {
+                postLikeDao.deleteLike(existingLike)
+                post?.let {
+                    postDao.updateLikesCount(postId, it.likesCount - 1)
+                }
+            } else {
+                val newLike = PostLike(
+                    postId = postId,
+                    userId = userId
+                )
+                postLikeDao.insertLike(newLike)
+                post?.let {
+                    postDao.updateLikesCount(postId, it.likesCount + 1)
+                }
+            }
+        }
+    }
+    
+    fun isPostLiked(postId: String): Flow<Boolean> = flow {
+        val userId = userRepository.getCurrentUserId()
+        val like = postLikeDao.getLike(postId, userId)
+        emit(like != null)
+    }.flowOn(Dispatchers.IO)
+    
+    fun getPostLikesCount(postId: String): Flow<Int> {
+        return postLikeDao.getLikesCount(postId)
+    }
+}

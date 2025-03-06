@@ -3,16 +3,16 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
 import com.final_project.poop_bags.data.models.Post
 import com.final_project.poop_bags.databinding.ViewPostItemBinding
-import com.google.android.material.card.MaterialCardView
 
 class PostItemView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : MaterialCardView(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var binding: ViewPostItemBinding =
         ViewPostItemBinding.inflate(LayoutInflater.from(context), this)
@@ -20,7 +20,8 @@ class PostItemView @JvmOverloads constructor(
     data class ViewConfig(
         val isFavorite: Boolean = false,
         val isDelete: Boolean = false,
-        val isEdit: Boolean = false
+        val isEdit: Boolean = false,
+        val isLikeEnabled: Boolean = true
     )
 
     @SuppressLint("SetTextI18n")
@@ -28,8 +29,10 @@ class PostItemView @JvmOverloads constructor(
         post: Post,
         config: ViewConfig,
         onFavoriteClick: ((Post) -> Unit)? = null,
+        onLikeClick: ((Post) -> Unit)? = null,
         onDeleteClick: ((Post) -> Unit)? = null,
-        onEditClick: ((Post) -> Unit)? = null
+        onEditClick: ((Post) -> Unit)? = null,
+        isLiked: Boolean = false
     ) {
         binding.apply {
             titleText.text = post.title
@@ -40,6 +43,14 @@ class PostItemView @JvmOverloads constructor(
                 .load(post.imageUrl)
                 .centerCrop()
                 .into(postImage)
+
+            likeButton.apply {
+                isSelected = isLiked
+                setOnClickListener { 
+                    isSelected = !isSelected
+                    onLikeClick?.invoke(post)
+                }
+            }
 
             favoriteButton.apply {
                 visibility = if (config.isFavorite) View.VISIBLE else View.GONE

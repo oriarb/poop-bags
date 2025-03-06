@@ -27,4 +27,6 @@
     <string name="likes_count">%d likes</string>
     <string name="delete">Delete</string>
     <string name="error_loading_posts">Error loading posts</string>
+    <string name="like_button">Like</string>
+    <string name="commentButton">comment</string>
 </resources>

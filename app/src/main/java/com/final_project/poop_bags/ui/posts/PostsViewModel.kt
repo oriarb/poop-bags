@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 class PostsViewModel @Inject constructor(
@@ -44,4 +45,12 @@ class PostsViewModel @Inject constructor(
             }
         }
     }
-} 
+
+    fun toggleLike(post: Post) {
+        viewModelScope.launch {
+            postRepository.toggleLike(post.postId)
+        }
+    }
+
+    fun isPostLiked(postId: String): Flow<Boolean> = postRepository.isPostLiked(postId)
+}

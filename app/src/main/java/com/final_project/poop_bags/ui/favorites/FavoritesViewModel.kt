@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
@@ -33,4 +34,12 @@ class FavoritesViewModel @Inject constructor(
             repository.toggleFavorite(post.postId)
         }
     }
+
+    fun toggleLike(post: Post) {
+        viewModelScope.launch {
+            repository.toggleLike(post.postId)
+        }
+    }
+
+    fun isPostLiked(postId: String): Flow<Boolean> = repository.isPostLiked(postId)
 } 

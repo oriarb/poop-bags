@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -38,22 +37,35 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/postImage">
 
+            <ImageButton
+                android:id="@+id/likeButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/likes_count"
+                android:src="@drawable/like_button_selector" />
+
             <TextView
                 android:id="@+id/likesCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawablePadding="4dp"
-                android:textColor="@color/white"
-                app:drawableStartCompat="@drawable/ic_like" />
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="16dp"
+                tools:text="0" />
+
+            <ImageView
+                android:id="@+id/commentIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/commentButton"
+                android:src="@drawable/ic_comment" />
 
             <TextView
                 android:id="@+id/commentsCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:drawablePadding="4dp"
-                android:textColor="@color/white"
-                app:drawableStartCompat="@drawable/ic_comment" />
+                android:layout_marginStart="4dp"
+                tools:text="0" />
         </LinearLayout>
 
         <LinearLayout

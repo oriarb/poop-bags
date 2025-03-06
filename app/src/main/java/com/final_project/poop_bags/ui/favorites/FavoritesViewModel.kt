@@ -15,13 +15,7 @@ import kotlinx.coroutines.flow.Flow
 class FavoritesViewModel @Inject constructor(
     private val repository: PostRepository
 ) : ViewModel() {
- 
-    init {
-        viewModelScope.launch {
-            repository.addSamplePosts()
-        }
-    }
-
+    
     val favoritePosts = repository.getFavoritePosts()
         .stateIn(
             scope = viewModelScope,

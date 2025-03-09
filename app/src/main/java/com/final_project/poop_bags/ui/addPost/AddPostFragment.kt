@@ -60,6 +60,21 @@ class AddPostFragment : Fragment() {
             val address = binding.addressInput.text.toString()
             viewModel.uploadPost(stationName, address)
         }
+
+        viewModel.isEditMode.observe(viewLifecycleOwner) { isEditMode ->
+            binding.toolbarTitle.text = if (isEditMode) "Edit Post" else "Add Post"
+            binding.uploadButton.text = if (isEditMode) "Save Changes" else "Upload"
+        }
+
+        viewModel.currentPost.observe(viewLifecycleOwner) { post ->
+            binding.stationNameInput.setText(post.title)
+            binding.addressInput.setText(post.address)
+            binding.addImageIcon.visibility = View.GONE
+            Glide.with(this)
+                .load(post.imageUrl)
+                .centerCrop()
+                .into(binding.postImage)
+        }
     }
 
     private fun handleSelectedImage(uri: Uri) {
@@ -85,8 +100,13 @@ class AddPostFragment : Fragment() {
 
         viewModel.uploadSuccess.observe(viewLifecycleOwner) { success ->
             if (success) {
-                Snackbar.make(binding.root, "Post uploaded successfully", Snackbar.LENGTH_SHORT).show()
-                findNavController().navigateUp()
+                val message = if (viewModel.isEditMode.value == true) {
+                    "Post updated successfully"
+                } else {
+                    "Post uploaded successfully"
+                }
+                Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+                findNavController().popBackStack()
             }
         }
     }

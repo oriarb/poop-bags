@@ -184,9 +184,28 @@ class PostRepository @Inject constructor(
         return postLikeDao.getLikesCount(postId)
     }
 
-    fun isPostFavorite(postId: String): Flow<Boolean> = flow {
-        val userId = userRepository.getCurrentUserId()
-        val favorite = postFavoriteDao.getFavorite(postId, userId)
-        emit(favorite != null)
-    }.flowOn(Dispatchers.IO)
+    suspend fun isPostFavorite(postId: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            val userId = userRepository.getCurrentUserId()
+            postFavoriteDao.getFavorite(postId, userId) != null
+        }
+    }
+
+    suspend fun getPostById(postId: String): Post? {
+        return withContext(Dispatchers.IO) {
+            postDao.getPostById(postId)
+        }
+    }
+
+    suspend fun updatePost(postId: String, title: String, address: String, imageUrl: String) {
+        withContext(Dispatchers.IO) {
+            val existingPost = getPostById(postId) ?: throw Exception("Post not found")
+            val updatedPost = existingPost.copy(
+                title = title,
+                address = address,
+                imageUrl = imageUrl
+            )
+            postDao.updatePost(updatedPost)
+        }
+    }
 }

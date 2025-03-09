@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.final_project.poop_bags.data.ImageCache
 import com.final_project.poop_bags.data.repository.PostRepository
+import com.final_project.poop_bags.data.models.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,44 +27,70 @@ class AddPostViewModel @Inject constructor(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
-    private var selectedImageUri: Uri? = null
-    private var editPostId: String? = null
+    private val _isEditMode = MutableLiveData<Boolean>()
+    val isEditMode: LiveData<Boolean> = _isEditMode
 
-    fun setEditPost(postId: String) {
-        editPostId = postId
-        // Load existing post data if needed
-    }
+    private val _currentPost = MutableLiveData<Post>()
+    val currentPost: LiveData<Post> = _currentPost
+
+    private var selectedImageUri: Uri? = null
 
     fun setSelectedImage(uri: Uri) {
         selectedImageUri = uri
     }
 
-    fun uploadPost(stationName: String, address: String) {
-        if (!validateInput(stationName, address)) {
-            return
+    fun setEditPost(postId: String) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                postRepository.getPostById(postId)?.let { post ->
+                    _currentPost.value = post
+                    _isEditMode.value = true
+                }
+            } catch (e: Exception) {
+                _error.value = "Failed to load post: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
         }
+    }
+
+    fun uploadPost(stationName: String, address: String) {
+        if (!validateInput(stationName, address)) return
 
         viewModelScope.launch {
             try {
                 _isLoading.value = true
                 
-                selectedImageUri?.let { uri ->
-                    try {
-                        val cachedImagePath = imageCache.cacheImage(uri)
-                        postRepository.addPost(
+                val imageUrl = selectedImageUri?.let { uri ->
+                    imageCache.cacheImage(uri)
+                } ?: _currentPost.value?.imageUrl
+
+                if (imageUrl == null && _currentPost.value?.imageUrl == null) {
+                    _error.value = "Please select an image"
+                    return@launch
+                }
+
+                if (_isEditMode.value == true) {
+                    _currentPost.value?.postId?.let { postId ->
+                        postRepository.updatePost(
+                            postId = postId,
                             title = stationName.trim(),
                             address = address.trim(),
-                            imageUrl = cachedImagePath
+                            imageUrl = imageUrl ?: _currentPost.value?.imageUrl!!
                         )
                         _uploadSuccess.value = true
-                    } catch (e: Exception) {
-                        _error.value = "Failed to process image: ${e.message}"
                     }
-                } ?: run {
-                    _error.value = "Please select an image"
+                } else {
+                    postRepository.addPost(
+                        title = stationName.trim(),
+                        address = address.trim(),
+                        imageUrl = imageUrl!!
+                    )
+                    _uploadSuccess.value = true
                 }
             } catch (e: Exception) {
-                _error.value = e.message ?: "Failed to upload post"
+                _error.value = e.message ?: "Failed to save post"
             } finally {
                 _isLoading.value = false
             }
@@ -72,7 +99,7 @@ class AddPostViewModel @Inject constructor(
 
     private fun validateInput(stationName: String, address: String): Boolean {
         when {
-            selectedImageUri == null -> {
+            selectedImageUri == null && _currentPost.value?.imageUrl == null -> {
                 _error.value = "Please select an image"
                 return false
             }

@@ -75,27 +75,25 @@ class FavoritesFragment : Fragment() {
                         setMargins(0, 0, 0, 16)
                     }
                 }
-                binding.favoritesContainer.addView(favoriteItem)
-                bindPost(post, favoriteItem)
-            }
-        }
-    }
-
-    private fun bindPost(post: Post, postItem: PostItemView) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isPostLiked(post.postId).collect { isLiked ->
-                    postItem.bind(
-                        post = post,
-                        config = PostItemView.ViewConfig(
-                            isFavorite = true,
-                            isLikeEnabled = true
-                        ),
-                        onFavoriteClick = { viewModel.removeFromFavorites(it) },
-                        onLikeClick = { viewModel.toggleLike(it) },
-                        isLiked = isLiked
-                    )
+                
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        viewModel.isPostLiked(post.postId).collect { isLiked ->
+                            favoriteItem.bind(
+                                post = post.copy(isFavorite = true),
+                                config = PostItemView.ViewConfig(
+                                    isFavorite = true,
+                                    isLikeEnabled = true
+                                ),
+                                onFavoriteClick = { viewModel.removeFromFavorites(it) },
+                                onLikeClick = { viewModel.toggleLike(it) },
+                                isLiked = isLiked
+                            )
+                        }
+                    }
                 }
+                
+                binding.favoritesContainer.addView(favoriteItem)
             }
         }
     }

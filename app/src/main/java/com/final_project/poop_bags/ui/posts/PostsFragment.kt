@@ -17,6 +17,7 @@ import com.final_project.poop_bags.databinding.FragmentPostsBinding
 import com.final_project.poop_bags.data.models.Post
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import androidx.core.os.bundleOf
 
 @AndroidEntryPoint
 class PostsFragment : Fragment() {
@@ -103,18 +104,33 @@ class PostsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isPostLiked(post.postId).collect { isLiked ->
-                    postItem.bind(
-                        post = post,
-                        config = PostItemView.ViewConfig(
-                            isDelete = true,
-                            isEdit = true,
-                            isLikeEnabled = true
-                        ),
-                        onDeleteClick = { viewModel.deletePost(it) },
-                        onEditClick = { /* נוסיף בהמשך */ },
-                        onLikeClick = { viewModel.toggleLike(it) },
-                        isLiked = isLiked
-                    )
+                    try {
+                        postItem.bind(
+                            post = post,
+                            config = PostItemView.ViewConfig(
+                                isDelete = true,
+                                isEdit = true,
+                                isLikeEnabled = true,
+                                isFavorite = true
+                            ),
+                            onDeleteClick = { viewModel.deletePost(it) },
+                            onEditClick = {
+                                try {
+                                    findNavController().navigate(
+                                        R.id.navigation_add_post,
+                                        bundleOf("postId" to post.postId)
+                                    )
+                                } catch (e: Exception) {
+                                    // Log the error or show a message to the user
+                                }
+                            },
+                            onLikeClick = { viewModel.toggleLike(it) },
+                            onFavoriteClick = { viewModel.toggleFavorite(it) },
+                            isLiked = isLiked
+                        )
+                    } catch (e: Exception) {
+                        // Handle binding error
+                    }
                 }
             }
         }

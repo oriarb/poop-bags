@@ -29,4 +29,10 @@
     <string name="error_loading_posts">Error loading posts</string>
     <string name="like_button">Like</string>
     <string name="commentButton">comment</string>
+    <string name="title_explore">Explore</string>
+    <string name="title_add_post">Add Post</string>
+    <string name="add_image">Add Image</string>
+    <string name="upload">upload</string>
+    <string name="station_name">Station Name</string>
+    <string name="address">Address</string>
 </resources>

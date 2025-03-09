@@ -66,29 +66,13 @@ class EditProfileFragment : Fragment() {
     ) { success ->
         if (success) {
             tempImageUri?.let { uri ->
-                Glide.with(this)
-                    .load(uri)
-                    .circleCrop()
-                    .placeholder(R.drawable.default_profile)
-                    .into(binding.profileImage)
-                
-                viewModel.updateProfilePicture(uri)
+                handleSelectedImage(uri)
             }
         }
     }
 
-    private val pickImageLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let { 
-            Glide.with(this)
-                .load(uri)
-                .circleCrop()
-                .placeholder(R.drawable.default_profile)
-                .into(binding.profileImage)
-            
-            viewModel.updateProfilePicture(uri)
-        }
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let { handleSelectedImage(it) }
     }
 
     override fun onCreateView(
@@ -133,13 +117,14 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun showImagePickerDialog() {
-        val options = arrayOf("Take a photo", "Choose from gallery")
+        val options = arrayOf("Take Photo", "Choose from Gallery", "Cancel")
         AlertDialog.Builder(requireContext())
-            .setTitle("Choose profile picture")
-            .setItems(options) { _, which ->
+            .setTitle("Choose Profile Picture")
+            .setItems(options) { dialog, which ->
                 when (which) {
                     0 -> takePhoto()
                     1 -> pickFromGallery()
+                    2 -> dialog.dismiss()
                 }
             }
             .show()
@@ -161,7 +146,16 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun pickFromGallery() {
-        pickImageLauncher.launch("image/*")
+        getContent.launch("image/*")
+    }
+
+    private fun handleSelectedImage(uri: Uri) {
+        viewModel.updateProfilePicture(uri)
+        Glide.with(this)
+            .load(uri)
+            .circleCrop()
+            .placeholder(R.drawable.default_profile)
+            .into(binding.profileImage)
     }
 
     private fun observeViewModel() {

@@ -5,6 +5,7 @@ import android.net.Uri
 import com.bumptech.glide.Glide
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,22 +13,32 @@ import javax.inject.Singleton
 class ImageCache @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    fun cacheImage(uri: Uri): String {
-        return try {
-            val future = Glide.with(context)
-                .asFile()
-                .load(uri)
-                .submit()
-
-            val cachedFile = future.get()
-            cachedFile.absolutePath
-        } catch (e: Exception) {
-            throw IllegalStateException("Failed to cache image", e)
+    private val imageCacheDir: File by lazy {
+        File(context.cacheDir, "images").apply {
+            if (!exists()) {
+                mkdirs()
+            }
         }
     }
 
-    fun getCacheDir(): File? {
-        return Glide.getPhotoCacheDir(context)
+    fun cacheImage(uri: Uri): String {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(uri)
+                ?: throw Exception("Failed to open input stream")
+
+            val fileName = "img_${System.currentTimeMillis()}.jpg"
+            val outputFile = File(imageCacheDir, fileName)
+
+            FileOutputStream(outputFile).use { outputStream ->
+                inputStream.use { input ->
+                    input.copyTo(outputStream)
+                }
+            }
+
+            outputFile.absolutePath
+        } catch (e: Exception) {
+            throw Exception("Failed to cache image: ${e.message}")
+        }
     }
 
     fun clearCache() {

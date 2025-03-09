@@ -13,9 +13,15 @@
 
     <fragment
         android:id="@+id/navigation_add_post"
-        android:name="com.final_project.poop_bags.ui.posts.PostsFragment"
+        android:name="com.final_project.poop_bags.ui.addpost.AddPostFragment"
         android:label="@string/title_add_post"
-        tools:layout="@layout/fragment_posts" />
+        tools:layout="@layout/fragment_add_post">
+        <argument
+            android:name="postId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"

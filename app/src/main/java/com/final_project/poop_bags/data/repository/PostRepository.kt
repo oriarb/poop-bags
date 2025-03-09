@@ -59,7 +59,8 @@ class PostRepository @Inject constructor(
                     imageUrl = "https://images.dog.ceo/breeds/retriever-golden/n02099601_1024.jpg",
                     likesCount = 5,
                     commentsCount = 2,
-                    isFavorite = false
+                    isFavorite = false,
+                    address = "המרכז"
                 ),
                 Post(
                     postId = "sample_2",
@@ -68,7 +69,8 @@ class PostRepository @Inject constructor(
                     imageUrl = "https://images.dog.ceo/breeds/mountain-swiss/n02107574_1346.jpg",
                     likesCount = 3,
                     commentsCount = 1,
-                    isFavorite = false
+                    isFavorite = false,
+                    address = "המרכז"
                 ),
                 Post(
                     postId = "sample_3",
@@ -77,7 +79,8 @@ class PostRepository @Inject constructor(
                     imageUrl = "https://images.dog.ceo/breeds/husky/n02110185_10047.jpg",
                     likesCount = 8,
                     commentsCount = 4,
-                    isFavorite = false
+                    isFavorite = false,
+                    address = "המרכז"
                 ),
                 Post(
                     postId = "sample_4",
@@ -86,7 +89,8 @@ class PostRepository @Inject constructor(
                     imageUrl = "https://images.dog.ceo/breeds/retriever-chesapeake/n02099849_1830.jpg",
                     likesCount = 12,
                     commentsCount = 6,
-                    isFavorite = false
+                    isFavorite = false,
+                    address = "המרכז"
                 )
             )
             
@@ -116,11 +120,12 @@ class PostRepository @Inject constructor(
         }
     }
 
-    suspend fun addPost(title: String, imageUrl: String) {
+    suspend fun addPost(title: String, address: String, imageUrl: String) {
         withContext(Dispatchers.IO) {
             val newPost = Post(
                 postId = generatePostId(),
                 title = title,
+                address = address,
                 imageUrl = imageUrl,
                 likesCount = 0,
                 commentsCount = 0,

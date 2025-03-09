@@ -9,6 +9,7 @@ data class Post(
     val postId: String,
     val userId: String,
     val title: String,
+    val address: String,
     val imageUrl: String,
     var likesCount: Int = 0,
     val commentsCount: Int = 0,

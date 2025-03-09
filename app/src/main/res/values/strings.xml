@@ -29,4 +29,6 @@
     <string name="error_loading_posts">Error loading posts</string>
     <string name="like_button">Like</string>
     <string name="commentButton">comment</string>
+    <string name="title_explore">Explore</string>
+    <string name="title_add_post">Add Post</string>
 </resources>

@@ -3,36 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_explore">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.final_project.poop_bags.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
-
-    <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_explore"
         android:name="com.final_project.poop_bags.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/title_explore"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/editProfileFragment"
-        android:name="com.final_project.poop_bags.ui.editProfileFragment.EditProfileFragment"
-        android:label="@string/edit_profile"
-        tools:layout="@layout/fragment_edit_profile" />
-
-    <fragment
-        android:id="@+id/favouritesFragment"
-        android:name="com.final_project.poop_bags.ui.favorites.FavoritesFragment"
-        android:label="@string/favourites"
-        tools:layout="@layout/fragment_favorites" />
-
-    <fragment
-        android:id="@+id/postsFragment"
+        android:id="@+id/navigation_add_post"
         android:name="com.final_project.poop_bags.ui.posts.PostsFragment"
-        android:label="@string/posts"
+        android:label="@string/title_add_post"
         tools:layout="@layout/fragment_posts" />
 
     <fragment
@@ -58,4 +40,22 @@
             android:id="@+id/action_navigation_profile_to_favouritesFragment"
             app:destination="@id/favouritesFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.final_project.poop_bags.ui.editProfileFragment.EditProfileFragment"
+        android:label="@string/edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
+
+    <fragment
+        android:id="@+id/favouritesFragment"
+        android:name="com.final_project.poop_bags.ui.favorites.FavoritesFragment"
+        android:label="@string/favourites"
+        tools:layout="@layout/fragment_favorites" />
+
+    <fragment
+        android:id="@+id/postsFragment"
+        android:name="com.final_project.poop_bags.ui.posts.PostsFragment"
+        android:label="@string/posts"
+        tools:layout="@layout/fragment_posts" />
 </navigation>

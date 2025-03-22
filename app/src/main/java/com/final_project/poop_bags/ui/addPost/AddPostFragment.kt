@@ -1,4 +1,4 @@
-package com.final_project.poop_bags.ui.addpost
+package com.final_project.poop_bags.ui.addPost
 
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.final_project.poop_bags.databinding.FragmentAddPostBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,7 +73,7 @@ class AddPostFragment : Fragment() {
             binding.addImageIcon.visibility = View.GONE
             Glide.with(this)
                 .load(post.imageUrl)
-                .centerCrop()
+                .apply(RequestOptions().centerCrop())
                 .into(binding.postImage)
         }
     }
@@ -82,7 +83,7 @@ class AddPostFragment : Fragment() {
         binding.addImageIcon.visibility = View.GONE
         Glide.with(this)
             .load(uri)
-            .centerCrop()
+            .apply(RequestOptions().centerCrop())
             .into(binding.postImage)
     }
 

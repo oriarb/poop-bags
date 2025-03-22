@@ -35,4 +35,6 @@
     <string name="upload">upload</string>
     <string name="station_name">Station Name</string>
     <string name="address">Address</string>
+    <string name="back">Back</string>
+    <string name="add_post">Add Post</string>
 </resources>

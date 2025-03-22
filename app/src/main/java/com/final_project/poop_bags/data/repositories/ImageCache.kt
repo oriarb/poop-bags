@@ -1,8 +1,7 @@
-package com.final_project.poop_bags.data
+package com.final_project.poop_bags.data.repositories
 
 import android.content.Context
 import android.net.Uri
-import com.bumptech.glide.Glide
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.FileOutputStream
@@ -39,11 +38,5 @@ class ImageCache @Inject constructor(
         } catch (e: Exception) {
             throw Exception("Failed to cache image: ${e.message}")
         }
-    }
-
-    fun clearCache() {
-        Thread {
-            Glide.get(context).clearDiskCache()
-        }.start()
     }
 } 

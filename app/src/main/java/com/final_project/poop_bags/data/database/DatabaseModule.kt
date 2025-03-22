@@ -7,7 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.final_project.poop_bags.data.database.users.UserDao
 import com.final_project.poop_bags.data.database.posts.PostDao
 import com.final_project.poop_bags.data.database.posts.PostLikeDao
-import com.final_project.poop_bags.data.local.dao.PostFavoriteDao
+import com.final_project.poop_bags.data.database.posts.PostFavoriteDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

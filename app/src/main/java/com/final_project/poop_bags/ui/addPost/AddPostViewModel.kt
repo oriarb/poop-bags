@@ -1,12 +1,12 @@
-package com.final_project.poop_bags.ui.addpost
+package com.final_project.poop_bags.ui.addPost
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.final_project.poop_bags.data.ImageCache
-import com.final_project.poop_bags.data.repository.PostRepository
+import com.final_project.poop_bags.data.repositories.ImageCache
+import com.final_project.poop_bags.data.repositories.PostRepository
 import com.final_project.poop_bags.data.models.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

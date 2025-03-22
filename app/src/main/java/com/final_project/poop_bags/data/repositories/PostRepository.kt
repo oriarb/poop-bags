@@ -4,7 +4,7 @@ import com.final_project.poop_bags.data.database.posts.PostLikeDao
 import com.final_project.poop_bags.data.models.Post
 import com.final_project.poop_bags.data.database.posts.PostDao
 import com.final_project.poop_bags.data.models.PostLike
-import com.final_project.poop_bags.data.local.dao.PostFavoriteDao
+import com.final_project.poop_bags.data.database.posts.PostFavoriteDao
 import com.final_project.poop_bags.data.models.PostFavorite
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,7 +20,6 @@ class PostRepository @Inject constructor(
     private val postDao: PostDao,
     private val postLikeDao: PostLikeDao,
     private val postFavoriteDao: PostFavoriteDao,
-    private val imageCache: ImageCache,
     private val userRepository: UserRepository
 ) {
     fun getFavoritePosts(): Flow<List<Post>> = flow {
@@ -42,80 +41,6 @@ class PostRepository @Inject constructor(
                 )
                 postFavoriteDao.insertFavorite(newFavorite)
             }
-        }
-    }
-
-    suspend fun addSamplePosts() {
-        withContext(Dispatchers.IO) {
-            val currentUser = userRepository.getUserProfile()
-            postDao.deleteAllPosts()
-            
-            val samplePosts = listOf(
-                Post(
-                    postId = "sample_1",
-                    userId = currentUser.userId,
-                    title = "הכלב שלי אוהב לשחק בפארק",
-                    imageUrl = "https://images.dog.ceo/breeds/retriever-golden/n02099601_1024.jpg",
-                    likesCount = 5,
-                    commentsCount = 2,
-                    isFavorite = false,
-                    address = "המרכז"
-                ),
-                Post(
-                    postId = "sample_2",
-                    userId = currentUser.userId,
-                    title = "טיול בוקר מושלם",
-                    imageUrl = "https://images.dog.ceo/breeds/mountain-swiss/n02107574_1346.jpg",
-                    likesCount = 3,
-                    commentsCount = 1,
-                    isFavorite = false,
-                    address = "המרכז"
-                ),
-                Post(
-                    postId = "sample_3",
-                    userId = currentUser.userId,
-                    title = "הכירו את מקס החדש שלי",
-                    imageUrl = "https://images.dog.ceo/breeds/husky/n02110185_10047.jpg",
-                    likesCount = 8,
-                    commentsCount = 4,
-                    isFavorite = false,
-                    address = "המרכז"
-                ),
-                Post(
-                    postId = "sample_4",
-                    userId = currentUser.userId,
-                    title = "יום כיף בחוף הים",
-                    imageUrl = "https://images.dog.ceo/breeds/retriever-chesapeake/n02099849_1830.jpg",
-                    likesCount = 12,
-                    commentsCount = 6,
-                    isFavorite = false,
-                    address = "המרכז"
-                )
-            )
-
-            samplePosts.forEach { post ->
-                postDao.insertPost(post)
-            }
-
-            // הוספת לייקים לדוגמה
-            postLikeDao.insertLike(PostLike(
-                postId = "sample_1",
-                userId = currentUser.userId
-            ))
-            postLikeDao.insertLike(PostLike(
-                postId = "sample_3",
-                userId = currentUser.userId
-            ))
-
-            // הוספת מועדפים לדוגמה
-            postFavoriteDao.insertFavorite(PostFavorite(
-                postId = "sample_2",
-                userId = currentUser.userId
-            ))
-            postFavoriteDao.insertFavorite(PostFavorite(
-                postId = "sample_4",
-                userId = currentUser.userId
-            ))
         }
     }
 

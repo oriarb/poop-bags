@@ -27,7 +27,7 @@
 
     <fragment
         android:id="@+id/navigation_add_post"
-        android:name="com.final_project.poop_bags.ui.addpost.AddPostFragment"
+        android:name="com.final_project.poop_bags.ui.addPost.AddPostFragment"
         android:label="Add Post"
         tools:layout="@layout/fragment_add_post">
         <argument

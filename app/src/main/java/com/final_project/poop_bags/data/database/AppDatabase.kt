@@ -3,10 +3,11 @@ package com.final_project.poop_bags.data.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.final_project.poop_bags.data.models.UserProfile
-import com.final_project.poop_bags.data.local.dao.UserDao
+import com.final_project.poop_bags.data.database.users.UserDao
 import com.final_project.poop_bags.data.models.Post
-import com.final_project.poop_bags.data.local.dao.PostDao
-import com.final_project.poop_bags.data.local.dao.PostLikeDao
+import com.final_project.poop_bags.data.database.posts.PostDao
+import com.final_project.poop_bags.data.database.posts.PostFavoriteDao
+import com.final_project.poop_bags.data.database.posts.PostLikeDao
 import com.final_project.poop_bags.data.models.PostLike
 import com.final_project.poop_bags.data.models.PostFavorite
 

@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.final_project.poop_bags.data.database.users.UserDao
 import com.final_project.poop_bags.data.database.posts.PostDao
 import com.final_project.poop_bags.data.database.posts.PostLikeDao
+import com.final_project.poop_bags.data.local.dao.PostFavoriteDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,7 +29,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "poop_bags_db"
         )
-        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
         .build()
     }
 
@@ -77,6 +78,21 @@ object DatabaseModule {
         }
     }
 
+    private val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("""
+                CREATE TABLE IF NOT EXISTS post_favorites (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    postId TEXT NOT NULL,
+                    userId TEXT NOT NULL,
+                    timestamp INTEGER NOT NULL,
+                    FOREIGN KEY(postId) REFERENCES posts(postId) ON DELETE CASCADE
+                )
+            """)
+            db.execSQL("CREATE INDEX IF NOT EXISTS index_post_favorites_postId ON post_favorites(postId)")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideUserDao(database: AppDatabase): UserDao {
@@ -94,4 +110,10 @@ object DatabaseModule {
     fun providePostLikeDao(database: AppDatabase): PostLikeDao {
         return database.postLikeDao()
     }
-} 
+
+    @Provides
+    @Singleton
+    fun providePostFavoriteDao(database: AppDatabase): PostFavoriteDao {
+        return database.postFavoriteDao()
+    }
+}

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.final_project.poop_bags.data.models.Post
 import kotlinx.coroutines.flow.Flow
 
@@ -32,4 +33,7 @@ interface PostDao {
     
     @Query("UPDATE posts SET likesCount = :count WHERE postId = :postId")
     suspend fun updateLikesCount(postId: String, count: Int)
+
+    @Update
+    suspend fun updatePost(post: Post)
 } 

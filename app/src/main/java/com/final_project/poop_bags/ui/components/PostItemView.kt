@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
+import com.final_project.poop_bags.R
 import com.final_project.poop_bags.data.models.Post
 import com.final_project.poop_bags.databinding.ViewPostItemBinding
 
@@ -36,6 +37,7 @@ class PostItemView @JvmOverloads constructor(
     ) {
         binding.apply {
             titleText.text = post.title
+            addressText.text = post.address
             likesCount.text = post.likesCount.toString()
             commentsCount.text = post.commentsCount.toString()
             
@@ -44,17 +46,19 @@ class PostItemView @JvmOverloads constructor(
                 .centerCrop()
                 .into(postImage)
 
-            likeButton.apply {
-                isSelected = isLiked
-                setOnClickListener { 
-                    isSelected = !isSelected
-                    onLikeClick?.invoke(post)
-                }
-            }
-
             favoriteButton.apply {
                 visibility = if (config.isFavorite) View.VISIBLE else View.GONE
+                setImageResource(
+                    if (post.isFavorite) R.drawable.ic_star_filled
+                    else R.drawable.ic_star_outline
+                )
                 setOnClickListener { onFavoriteClick?.invoke(post) }
+            }
+
+            likeButton.apply {
+                visibility = if (config.isLikeEnabled) View.VISIBLE else View.GONE
+                isSelected = isLiked
+                setOnClickListener { onLikeClick?.invoke(post) }
             }
 
             deleteButton.apply {

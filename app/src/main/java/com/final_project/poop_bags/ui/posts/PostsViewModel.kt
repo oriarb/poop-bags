@@ -27,10 +27,12 @@ class PostsViewModel @Inject constructor(
             try {
                 val userId = userRepository.getUserProfile().userId
                 postRepository.getUserPosts(userId).collect { posts ->
-                    _userPosts.value = posts
+                    val updatedPosts = posts.map { post ->
+                        post.copy(isFavorite = postRepository.isPostFavorite(post.postId))
+                    }
+                    _userPosts.value = updatedPosts
                 }
             } catch (e: Exception) {
-                // Handle error
                 _userPosts.value = emptyList()
             }
         }
@@ -53,4 +55,22 @@ class PostsViewModel @Inject constructor(
     }
 
     fun isPostLiked(postId: String): Flow<Boolean> = postRepository.isPostLiked(postId)
+
+    fun toggleFavorite(post: Post) {
+        viewModelScope.launch {
+            try {
+                postRepository.toggleFavorite(post.postId)
+                val updatedPosts = _userPosts.value.map { 
+                    if (it.postId == post.postId) {
+                        it.copy(isFavorite = !it.isFavorite)
+                    } else {
+                        it
+                    }
+                }
+                _userPosts.value = updatedPosts
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
 }

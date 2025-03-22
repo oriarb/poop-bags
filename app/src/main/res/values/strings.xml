@@ -37,4 +37,6 @@
     <string name="address">Address</string>
     <string name="back">Back</string>
     <string name="add_post">Add Post</string>
+    <string name="ui_setup_error">UI setup error: %1$s</string>
+    <string name="navigation_error">Navigation error: %1$s</string>
 </resources>

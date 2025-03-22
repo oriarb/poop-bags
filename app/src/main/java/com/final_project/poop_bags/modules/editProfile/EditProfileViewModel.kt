@@ -1,4 +1,4 @@
-package com.final_project.poop_bags.modules.editProfileFragment
+package com.final_project.poop_bags.modules.editProfile
 
 import android.net.Uri
 import androidx.lifecycle.LiveData

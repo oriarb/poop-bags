@@ -76,17 +76,25 @@ class EditProfileFragment : Fragment() {
         }
 
         binding.saveButton.setOnClickListener {
-            val username = binding.usernameInput.text.toString()
-            val email = binding.emailInput.text.toString()
-            viewModel.updateProfile(username, email)
+            try {
+                val username = binding.usernameInput.text.toString()
+                val email = binding.emailInput.text.toString()
+                viewModel.updateProfile(username, email)
+            } catch (e: Exception) {
+                Snackbar.make(binding.root, "Error saving profile: ${e.message}", Snackbar.LENGTH_LONG).show()
+            }
         }
 
         binding.profileImage.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == 
-                PackageManager.PERMISSION_GRANTED) {
-                showImagePickerDialog()
-            } else {
-                requestPermissionLauncher.launch(arrayOf(android.Manifest.permission.CAMERA))
+            try {
+                if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == 
+                    PackageManager.PERMISSION_GRANTED) {
+                    showImagePickerDialog()
+                } else {
+                    requestPermissionLauncher.launch(arrayOf(android.Manifest.permission.CAMERA))
+                }
+            } catch (e: Exception) {
+                Snackbar.make(binding.root, "Error accessing camera: ${e.message}", Snackbar.LENGTH_LONG).show()
             }
         }
     }
@@ -151,38 +159,54 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.userProfile.observe(viewLifecycleOwner) { profile ->
-            binding.usernameInput.setText(profile.username)
-            binding.emailInput.setText(profile.email)
-            
-            profile.profilePicture?.let { imagePath ->
-                Glide.with(this)
-                    .load(imagePath)
-                    .circleCrop()
-                    .placeholder(R.drawable.default_profile)
-                    .into(binding.profileImage)
+        try {
+            viewModel.userProfile.observe(viewLifecycleOwner) { profile ->
+                try {
+                    binding.usernameInput.setText(profile.username)
+                    binding.emailInput.setText(profile.email)
+                    
+                    profile.profilePicture?.let { imagePath ->
+                        Glide.with(this)
+                            .load(imagePath)
+                            .circleCrop()
+                            .placeholder(R.drawable.default_profile)
+                            .error(R.drawable.default_profile)
+                            .into(binding.profileImage)
+                    } ?: run {
+                        // Handle null profile picture
+                        Glide.with(this)
+                            .load(R.drawable.default_profile)
+                            .circleCrop()
+                            .into(binding.profileImage)
+                    }
+                } catch (e: Exception) {
+                    Snackbar.make(binding.root, "Error loading profile data: ${e.message}", Snackbar.LENGTH_LONG).show()
+                }
             }
-        }
 
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.loadingOverlay.isVisible = isLoading
-            binding.progressBar.isVisible = isLoading
-            binding.saveButton.isEnabled = !isLoading
-            binding.profileImage.isEnabled = !isLoading
-            binding.usernameInput.isEnabled = !isLoading
-            binding.emailInput.isEnabled = !isLoading
-        }
-
-        viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
-            if (errorMessage.isNotEmpty()) {
-                Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_LONG).show()
+            viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+                binding.loadingOverlay.isVisible = isLoading
+                binding.progressBar.isVisible = isLoading
+                binding.saveButton.isEnabled = !isLoading
+                binding.profileImage.isEnabled = !isLoading
+                binding.usernameInput.isEnabled = !isLoading
+                binding.emailInput.isEnabled = !isLoading
             }
-        }
 
-        viewModel.saveSuccess.observe(viewLifecycleOwner) { success ->
-            if (success) {
-                findNavController().navigateUp()
+            viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
+                if (errorMessage.isNotEmpty()) {
+                    Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_LONG).show()
+                }
             }
+
+            viewModel.saveSuccess.observe(viewLifecycleOwner) { success ->
+                if (success) {
+                    Snackbar.make(binding.root, "Profile updated successfully", Snackbar.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
+                }
+            }
+        } catch (e: Exception) {
+            Snackbar.make(binding.root, "Error in view model observation: ${e.message}", Snackbar.LENGTH_LONG).show()
         }
     }
 

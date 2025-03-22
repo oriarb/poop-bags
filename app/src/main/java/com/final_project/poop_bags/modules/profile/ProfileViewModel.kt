@@ -18,6 +18,9 @@ class ProfileViewModel @Inject constructor(
     private val _userProfile = MutableLiveData<UserProfile>()
     val userProfile: LiveData<UserProfile> = _userProfile
 
+    private val _error = MutableLiveData<String?>(null)
+    val error: LiveData<String?> = _error
+
     init {
         loadUserProfile()
     }
@@ -27,8 +30,13 @@ class ProfileViewModel @Inject constructor(
             try {
                 _userProfile.value = userRepository.getUserProfile()
             } catch (e: Exception) {
-                // Handle error
+                _error.value = "Failed to load profile: ${e.message}"
             }
         }
     }
+
+    fun onErrorShown() {
+        _error.value = null
+    }
 }
+

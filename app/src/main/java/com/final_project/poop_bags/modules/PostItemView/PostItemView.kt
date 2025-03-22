@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.final_project.poop_bags.R
 import com.final_project.poop_bags.models.Post
 import com.final_project.poop_bags.databinding.ViewPostItemBinding
+import com.google.android.material.snackbar.Snackbar
 
 class PostItemView @JvmOverloads constructor(
     context: Context,
@@ -37,41 +38,84 @@ class PostItemView @JvmOverloads constructor(
         onEditClick: ((Post) -> Unit)? = null,
         isLiked: Boolean = false
     ) {
-        binding.apply {
-            titleText.text = post.title
-            addressText.text = post.address
-            likesCount.text = post.likesCount.toString()
-            commentsCount.text = post.commentsCount.toString()
-            
-            Glide.with(context)
-                .load(post.imageUrl)
-                .centerCrop()
-                .into(postImage)
+        try {
+            binding.apply {
+                titleText.text = post.title
+                addressText.text = post.address
+                likesCount.text = post.likesCount.toString()
+                commentsCount.text = post.commentsCount.toString()
+                
+                try {
+                    if (post.imageUrl.isEmpty()) {
+                        postImage.setImageResource(android.R.drawable.ic_menu_gallery)
+                    } else {
+                        Glide.with(context)
+                            .load(post.imageUrl)
+                            .centerCrop()
+                            .placeholder(android.R.drawable.ic_menu_gallery)
+                            .error(android.R.drawable.ic_menu_gallery)
+                            .fallback(R.drawable.sample_post_image)
+                            .into(postImage)
+                    }
+                } catch (e: Exception) {
+                    postImage.setImageResource(R.drawable.sample_post_image)
+                }
 
-            favoriteButton.apply {
-                visibility = if (config.isFavorite) View.VISIBLE else View.GONE
-                setImageResource(
-                    if (post.isFavorite) R.drawable.ic_star_filled
-                    else R.drawable.ic_star_outline
-                )
-                setOnClickListener { onFavoriteClick?.invoke(post) }
-            }
+                favoriteButton.apply {
+                    visibility = if (config.isFavorite) View.VISIBLE else View.GONE
+                    setImageResource(
+                        if (post.isFavorite) R.drawable.ic_star_filled
+                        else R.drawable.ic_star_outline
+                    )
+                    setOnClickListener { 
+                        try {
+                            onFavoriteClick?.invoke(post)
+                        } catch (e: Exception) {
+                            showError("Error toggling favorite: ${e.message}")
+                        }
+                    }
+                }
 
-            likeButton.apply {
-                visibility = if (config.isLikeEnabled) View.VISIBLE else View.GONE
-                isSelected = isLiked
-                setOnClickListener { onLikeClick?.invoke(post) }
-            }
+                likeButton.apply {
+                    visibility = if (config.isLikeEnabled) View.VISIBLE else View.GONE
+                    isSelected = isLiked
+                    setOnClickListener { 
+                        try {
+                            onLikeClick?.invoke(post)
+                        } catch (e: Exception) {
+                            showError("Error toggling like: ${e.message}")
+                        }
+                    }
+                }
 
-            deleteButton.apply {
-                visibility = if (config.isDelete) View.VISIBLE else View.GONE
-                setOnClickListener { onDeleteClick?.invoke(post) }
-            }
+                deleteButton.apply {
+                    visibility = if (config.isDelete) View.VISIBLE else View.GONE
+                    setOnClickListener { 
+                        try {
+                            onDeleteClick?.invoke(post)
+                        } catch (e: Exception) {
+                            showError("Error deleting post: ${e.message}")
+                        }
+                    }
+                }
 
-            editButton.apply {
-                visibility = if (config.isEdit) View.VISIBLE else View.GONE
-                setOnClickListener { onEditClick?.invoke(post) }
+                editButton.apply {
+                    visibility = if (config.isEdit) View.VISIBLE else View.GONE
+                    setOnClickListener { 
+                        try {
+                            onEditClick?.invoke(post)
+                        } catch (e: Exception) {
+                            showError("Error editing post: ${e.message}")
+                        }
+                    }
+                }
             }
+        } catch (e: Exception) {
+            showError("Error binding post data: ${e.message}")
         }
+    }
+    
+    private fun showError(message: String) {
+        Snackbar.make(this, message, Snackbar.LENGTH_LONG).show()
     }
 } 

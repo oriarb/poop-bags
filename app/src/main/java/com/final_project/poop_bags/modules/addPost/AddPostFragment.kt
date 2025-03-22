@@ -53,13 +53,21 @@ class AddPostFragment : Fragment() {
         }
 
         binding.imageContainer.setOnClickListener {
-            getContent.launch("image/*")
+            try {
+                getContent.launch("image/*")
+            } catch (e: Exception) {
+                Snackbar.make(binding.root, "Failed to open image picker: ${e.message}", Snackbar.LENGTH_LONG).show()
+            }
         }
 
         binding.uploadButton.setOnClickListener {
-            val stationName = binding.stationNameInput.text.toString()
-            val address = binding.addressInput.text.toString()
-            viewModel.uploadPost(stationName, address)
+            try {
+                val stationName = binding.stationNameInput.text.toString()
+                val address = binding.addressInput.text.toString()
+                viewModel.uploadPost(stationName, address)
+            } catch (e: Exception) {
+                Snackbar.make(binding.root, "Error processing your request: ${e.message}", Snackbar.LENGTH_LONG).show()
+            }
         }
 
         viewModel.isEditMode.observe(viewLifecycleOwner) { isEditMode ->
@@ -79,12 +87,17 @@ class AddPostFragment : Fragment() {
     }
 
     private fun handleSelectedImage(uri: Uri) {
-        viewModel.setSelectedImage(uri)
-        binding.addImageIcon.visibility = View.GONE
-        Glide.with(this)
-            .load(uri)
-            .apply(RequestOptions().centerCrop())
-            .into(binding.postImage)
+        try {
+            viewModel.setSelectedImage(uri)
+            binding.addImageIcon.visibility = View.GONE
+            Glide.with(this)
+                .load(uri)
+                .apply(RequestOptions().centerCrop())
+                .into(binding.postImage)
+        } catch (e: Exception) {
+            Snackbar.make(binding.root, "Error processing image: ${e.message}", Snackbar.LENGTH_LONG).show()
+            binding.addImageIcon.visibility = View.VISIBLE
+        }
     }
 
     private fun observeViewModel() {
@@ -107,7 +120,11 @@ class AddPostFragment : Fragment() {
                     "Post uploaded successfully"
                 }
                 Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
-                findNavController().popBackStack()
+                try {
+                    findNavController().popBackStack()
+                } catch (e: Exception) {
+                    Snackbar.make(binding.root, "Navigation error: ${e.message}", Snackbar.LENGTH_LONG).show()
+                }
             }
         }
     }

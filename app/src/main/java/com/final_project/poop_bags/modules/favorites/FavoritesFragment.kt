@@ -16,6 +16,8 @@ import com.final_project.poop_bags.models.Post
 import com.final_project.poop_bags.databinding.FragmentFavoritesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CancellationException
 
 @AndroidEntryPoint
 class FavoritesFragment : Fragment() {
@@ -41,60 +43,100 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+        try {
+            binding.btnBack.setOnClickListener {
+                findNavController().navigateUp()
+            }
+        } catch (e: Exception) {
+            Snackbar.make(binding.root, "Navigation error: ${e.message}", Snackbar.LENGTH_LONG).show()
         }
     }
 
     private fun observeViewModel() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.favoritePosts.collect { posts ->
-                    updateFavoritesList(posts)
+        try {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    try {
+                        viewModel.favoritePosts.collect { posts ->
+                            updateFavoritesList(posts)
+                        }
+                    } catch (e: CancellationException) {
+                        // Ignore cancellation exceptions
+                    } catch (e: Exception) {
+                        Snackbar.make(binding.root, "Error loading favorites: ${e.message}", Snackbar.LENGTH_LONG).show()
+                    }
                 }
             }
+        } catch (e: Exception) {
+            Snackbar.make(binding.root, "Error in view model observation: ${e.message}", Snackbar.LENGTH_LONG).show()
         }
     }
 
     private fun updateFavoritesList(posts: List<Post>) {
-        binding.favoritesContainer.removeAllViews()
-        
-        if (posts.isEmpty()) {
-            binding.emptyStateText.visibility = View.VISIBLE
-            binding.scrollView.visibility = View.GONE
-        } else {
-            binding.emptyStateText.visibility = View.GONE
-            binding.scrollView.visibility = View.VISIBLE
+        try {
+            binding.favoritesContainer.removeAllViews()
             
-            posts.forEach { post ->
-                val favoriteItem = PostItemView(requireContext()).apply {
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        setMargins(0, 0, 0, 16)
-                    }
-                }
+            if (posts.isEmpty()) {
+                binding.emptyStateText.visibility = View.VISIBLE
+                binding.scrollView.visibility = View.GONE
+            } else {
+                binding.emptyStateText.visibility = View.GONE
+                binding.scrollView.visibility = View.VISIBLE
                 
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.isPostLiked(post.postId).collect { isLiked ->
-                            favoriteItem.bind(
-                                post = post.copy(isFavorite = true),
-                                config = PostItemView.ViewConfig(
-                                    isFavorite = true,
-                                    isLikeEnabled = true
-                                ),
-                                onFavoriteClick = { viewModel.removeFromFavorites(it) },
-                                onLikeClick = { viewModel.toggleLike(it) },
-                                isLiked = isLiked
-                            )
+                posts.forEach { post ->
+                    try {
+                        val favoriteItem = PostItemView(requireContext()).apply {
+                            layoutParams = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            ).apply {
+                                setMargins(0, 0, 0, 16)
+                            }
                         }
+                        
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                                try {
+                                    viewModel.isPostLiked(post.postId).collect { isLiked ->
+                                        favoriteItem.bind(
+                                            post = post.copy(isFavorite = true),
+                                            config = PostItemView.ViewConfig(
+                                                isFavorite = true,
+                                                isLikeEnabled = true
+                                            ),
+                                            onFavoriteClick = { 
+                                                try {
+                                                    viewModel.removeFromFavorites(it)
+                                                } catch (e: Exception) {
+                                                    Snackbar.make(binding.root, "Error removing from favorites: ${e.message}", Snackbar.LENGTH_LONG).show()
+                                                }
+                                            },
+                                            onLikeClick = { 
+                                                try {
+                                                    viewModel.toggleLike(it)
+                                                } catch (e: Exception) {
+                                                    Snackbar.make(binding.root, "Error toggling like: ${e.message}", Snackbar.LENGTH_LONG).show()
+                                                }
+                                            },
+                                            isLiked = isLiked
+                                        )
+                                    }
+                                } catch (e: Exception) {
+                                    if (e.javaClass.simpleName != "CancellationException") {
+                                        Snackbar.make(binding.root, "Error checking if post is liked: ${e.message}", Snackbar.LENGTH_LONG).show()
+                                    }
+                                }
+                            }
+                        }
+                        
+                        binding.favoritesContainer.addView(favoriteItem)
+                    } catch (e: Exception) {
+                        Snackbar.make(binding.root, "Error creating favorite item: ${e.message}", Snackbar.LENGTH_LONG).show()
                     }
                 }
-                
-                binding.favoritesContainer.addView(favoriteItem)
             }
+        } catch (e: Exception) {
+            Snackbar.make(binding.root, "Error updating favorites list: ${e.message}", Snackbar.LENGTH_LONG).show()
         }
     }
 

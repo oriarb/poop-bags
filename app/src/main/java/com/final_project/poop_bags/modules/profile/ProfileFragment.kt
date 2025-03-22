@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.final_project.poop_bags.R
 import com.final_project.poop_bags.databinding.FragmentProfileBinding
 import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -78,22 +79,32 @@ class ProfileFragment : Fragment() {
     private fun setupButtons() {
         val buttonContainer = binding.buttonContainer
         
-        profileButtons.forEach { buttonData ->
-            val buttonView = layoutInflater.inflate(
-                R.layout.component_profile_button,
-                buttonContainer,
-                false
-            ) as ViewGroup
-            
-            buttonView.findViewById<TextView>(R.id.buttonText).setText(buttonData.textRes)
-            buttonView.setOnClickListener { buttonData.onClick() }
-            
-            if (buttonContainer.childCount > 0) {
-                val params = buttonView.layoutParams as ViewGroup.MarginLayoutParams
-                params.topMargin = resources.getDimensionPixelSize(R.dimen.button_margin)
+        try {
+            profileButtons.forEach { buttonData ->
+                val buttonView = layoutInflater.inflate(
+                    R.layout.component_profile_button,
+                    buttonContainer,
+                    false
+                ) as ViewGroup
+                
+                buttonView.findViewById<TextView>(R.id.buttonText).setText(buttonData.textRes)
+                buttonView.setOnClickListener { 
+                    try {
+                        buttonData.onClick() 
+                    } catch (e: Exception) {
+                        showError(getString(R.string.navigation_error, e.message))
+                    }
+                }
+                
+                if (buttonContainer.childCount > 0) {
+                    val params = buttonView.layoutParams as ViewGroup.MarginLayoutParams
+                    params.topMargin = resources.getDimensionPixelSize(R.dimen.button_margin)
+                }
+                
+                buttonContainer.addView(buttonView)
             }
-            
-            buttonContainer.addView(buttonView)
+        } catch (e: Exception) {
+            showError(getString(R.string.ui_setup_error, e.message))
         }
     }
 
@@ -106,11 +117,23 @@ class ProfileFragment : Fragment() {
                     .load(imagePath)
                     .circleCrop()
                     .placeholder(R.drawable.default_profile)
+                    .error(R.drawable.default_profile)
                     .into(binding.profileImage)
             }
             
             binding.username.text = profile.username
         }
+        
+        viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+                showError(it)
+                viewModel.onErrorShown()
+            }
+        }
+    }
+    
+    private fun showError(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
     }
 
     override fun onDestroyView() {

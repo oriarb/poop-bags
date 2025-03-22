@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.final_project.poop_bags.data.local.dao.UserDao
-import com.final_project.poop_bags.data.local.dao.PostDao
-import com.final_project.poop_bags.data.local.dao.PostLikeDao
-import com.final_project.poop_bags.data.local.dao.PostFavoriteDao
+import com.final_project.poop_bags.data.database.users.UserDao
+import com.final_project.poop_bags.data.database.posts.PostDao
+import com.final_project.poop_bags.data.database.posts.PostLikeDao
+import com.final_project.poop_bags.data.database.posts.PostFavoriteDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,8 +59,10 @@ object DatabaseModule {
 
     private val MIGRATION_3_4 = object : Migration(3, 4) {
         override fun migrate(db: SupportSQLiteDatabase) {
+            // Drop existing table if exists
             db.execSQL("DROP TABLE IF EXISTS post_likes")
             
+            // Create new post_likes table
             db.execSQL("""
                 CREATE TABLE post_likes (
                     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -71,6 +73,7 @@ object DatabaseModule {
                 )
             """)
             
+            // Create index on postId
             db.execSQL("CREATE INDEX index_post_likes_postId ON post_likes(postId)")
         }
     }
@@ -113,4 +116,4 @@ object DatabaseModule {
     fun providePostFavoriteDao(database: AppDatabase): PostFavoriteDao {
         return database.postFavoriteDao()
     }
-} 
+}

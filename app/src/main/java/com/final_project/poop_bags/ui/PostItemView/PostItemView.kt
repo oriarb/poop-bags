@@ -1,3 +1,5 @@
+package com.final_project.poop_bags.ui.PostItemView
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet

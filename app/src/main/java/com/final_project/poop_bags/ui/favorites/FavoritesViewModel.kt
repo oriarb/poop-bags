@@ -3,7 +3,7 @@ package com.final_project.poop_bags.ui.favorites
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.final_project.poop_bags.data.models.Post
-import com.final_project.poop_bags.data.repository.PostRepository
+import com.final_project.poop_bags.data.repositories.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn

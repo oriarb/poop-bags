@@ -1,9 +1,8 @@
-package com.final_project.poop_bags.data.repository
+package com.final_project.poop_bags.data.repositories
 
 import android.net.Uri
-import com.final_project.poop_bags.data.ImageCache
 import com.final_project.poop_bags.data.models.UserProfile
-import com.final_project.poop_bags.data.local.dao.UserDao
+import com.final_project.poop_bags.data.database.users.UserDao
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -31,17 +30,6 @@ class UserRepository @Inject constructor(
                 )
             } catch (e: Exception) {
                 throw IllegalStateException("Failed to update profile picture", e)
-            }
-        }
-    }
-
-    suspend fun clearImageCache() {
-        withContext(Dispatchers.IO) {
-            try {
-                imageCache.clearCache()
-                userDao.updateProfilePicture(null)
-            } catch (e: Exception) {
-                throw IllegalStateException("Failed to clear image cache", e)
             }
         }
     }

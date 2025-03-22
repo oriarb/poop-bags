@@ -1,6 +1,6 @@
 package com.final_project.poop_bags.modules.favorites
 
-import com.final_project.poop_bags.modules.PostItemView.PostItemView
+import com.final_project.poop_bags.common.views.PostItemView
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

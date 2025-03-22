@@ -1,4 +1,4 @@
-package com.final_project.poop_bags.modules.PostItemView
+package com.final_project.poop_bags.common.views
 
 import android.annotation.SuppressLint
 import android.content.Context

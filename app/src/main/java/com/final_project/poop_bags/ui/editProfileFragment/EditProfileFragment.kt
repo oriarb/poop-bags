@@ -58,6 +58,8 @@ class EditProfileFragment : Fragment() {
     ) { permissions ->
         if (permissions.all { it.value }) {
             showImagePickerDialog()
+        } else {
+            Snackbar.make(binding.root, "Camera permission required to take photos", Snackbar.LENGTH_LONG).show()
         }
     }
 
@@ -102,17 +104,12 @@ class EditProfileFragment : Fragment() {
         }
 
         binding.profileImage.setOnClickListener {
-            if (hasPermissions()) {
+            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == 
+                PackageManager.PERMISSION_GRANTED) {
                 showImagePickerDialog()
             } else {
-                requestPermissionLauncher.launch(permissions)
+                requestPermissionLauncher.launch(arrayOf(android.Manifest.permission.CAMERA))
             }
-        }
-    }
-
-    private fun hasPermissions(): Boolean {
-        return permissions.all {
-            ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
         }
     }
 
@@ -122,7 +119,14 @@ class EditProfileFragment : Fragment() {
             .setTitle("Choose Profile Picture")
             .setItems(options) { dialog, which ->
                 when (which) {
-                    0 -> takePhoto()
+                    0 -> {
+                        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == 
+                            PackageManager.PERMISSION_GRANTED) {
+                            takePhoto()
+                        } else {
+                            requestPermissionLauncher.launch(arrayOf(android.Manifest.permission.CAMERA))
+                        }
+                    }
                     1 -> pickFromGallery()
                     2 -> dialog.dismiss()
                 }
@@ -131,22 +135,32 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun takePhoto() {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val imageFileName = "PROFILE_$timeStamp.jpg"
-        val values = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, imageFileName)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        }
-        tempImageUri = requireContext().contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values
-        )
-        tempImageUri?.let { uri ->
-            takePictureLauncher.launch(uri)
+        try {
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val imageFileName = "PROFILE_$timeStamp.jpg"
+            val values = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, imageFileName)
+                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            }
+            tempImageUri = requireContext().contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values
+            )
+            tempImageUri?.let { uri ->
+                takePictureLauncher.launch(uri)
+            } ?: run {
+                Snackbar.make(binding.root, "Failed to create image file", Snackbar.LENGTH_LONG).show()
+            }
+        } catch (e: Exception) {
+            Snackbar.make(binding.root, "Error taking photo: ${e.message}", Snackbar.LENGTH_LONG).show()
         }
     }
 
     private fun pickFromGallery() {
-        getContent.launch("image/*")
+        try {
+            getContent.launch("image/*")
+        } catch (e: Exception) {
+            Snackbar.make(binding.root, "Error opening gallery: ${e.message}", Snackbar.LENGTH_LONG).show()
+        }
     }
 
     private fun handleSelectedImage(uri: Uri) {

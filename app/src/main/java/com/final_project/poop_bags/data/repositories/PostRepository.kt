@@ -1,9 +1,8 @@
-package com.final_project.poop_bags.data.repository
+package com.final_project.poop_bags.data.repositories
 
-import com.final_project.poop_bags.data.local.dao.PostLikeDao
-import com.final_project.poop_bags.data.ImageCache
+import com.final_project.poop_bags.data.database.posts.PostLikeDao
 import com.final_project.poop_bags.data.models.Post
-import com.final_project.poop_bags.data.local.dao.PostDao
+import com.final_project.poop_bags.data.database.posts.PostDao
 import com.final_project.poop_bags.data.models.PostLike
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.flowOn
 class PostRepository @Inject constructor(
     private val postDao: PostDao,
     private val postLikeDao: PostLikeDao,
-    private val imageCache: ImageCache,
     private val userRepository: UserRepository
 ) {
     fun getFavoritePosts(): Flow<List<Post>> {
@@ -29,38 +27,6 @@ class PostRepository @Inject constructor(
             val post = postDao.getPostById(postId)
             post?.let {
                 postDao.updateFavoriteStatus(postId, !it.isFavorite)
-            }
-        }
-    }
-
-    suspend fun addSamplePosts() {
-        withContext(Dispatchers.IO) {
-            val currentUser = userRepository.getUserProfile()
-            postDao.deleteAllPosts()
-            
-            val samplePosts = listOf(
-                Post(
-                    postId = "sample_1",
-                    userId = currentUser.userId,
-                    title = "דוגמה ראשונה",
-                    imageUrl = "https://example.com/sample1.jpg",
-                    likesCount = 0,
-                    commentsCount = 2,
-                    isFavorite = true
-                ),
-                Post(
-                    postId = "sample_2",
-                    userId = currentUser.userId,
-                    title = "דוגמה שנייה",
-                    imageUrl = "https://example.com/sample2.jpg",
-                    likesCount = 0,
-                    commentsCount = 1,
-                    isFavorite = false
-                )
-            )
-            
-            samplePosts.forEach { post ->
-                postDao.insertPost(post)
             }
         }
     }

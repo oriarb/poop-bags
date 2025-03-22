@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.final_project.poop_bags.data.local.dao.UserDao
-import com.final_project.poop_bags.data.local.dao.PostDao
-import com.final_project.poop_bags.data.local.dao.PostLikeDao
+import com.final_project.poop_bags.data.database.users.UserDao
+import com.final_project.poop_bags.data.database.posts.PostDao
+import com.final_project.poop_bags.data.database.posts.PostLikeDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,12 +1,13 @@
 package com.final_project.poop_bags
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.final_project.poop_bags.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.navigation.fragment.NavHostFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -24,6 +25,17 @@ class MainActivity : AppCompatActivity() {
                 .findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
             val navController = navHostFragment.navController
             navView.setupWithNavController(navController)
+            
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                when (destination.id) {
+                    R.id.welcomeFragment, R.id.loginFragment, R.id.registerFragment -> {
+                        navView.visibility = View.GONE
+                    }
+                    else -> {
+                        navView.visibility = View.VISIBLE
+                    }
+                }
+            }
         }
     }
 }

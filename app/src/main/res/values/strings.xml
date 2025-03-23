@@ -39,4 +39,14 @@
     <string name="add_post">Add Post</string>
     <string name="ui_setup_error">UI setup error: %1$s</string>
     <string name="navigation_error">Navigation error: %1$s</string>
+    <string name="welcome_title">Welcome to PoopBags!</string>
+    <string name="welcome_subtitle">Join the community of\nresponsible pet owners!</string>
+    <string name="register">Register</string>
+    <string name="sign_in">Sign In</string>
+    <string name="back_to_welcome">Back to Welcome</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="already_have_account">Already have an account? Sign In</string>
+    <string name="full_name">Full Name</string>
+    <string name="email_address">Email</string>
+    <string name="password">Password</string>
 </resources>

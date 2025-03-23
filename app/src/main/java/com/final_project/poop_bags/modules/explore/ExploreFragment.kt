@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.final_project.poop_bags.R
 import com.final_project.poop_bags.databinding.FragmentDashboardBinding
 
 class ExploreFragment : Fragment() {
@@ -33,6 +34,13 @@ class ExploreFragment : Fragment() {
             textView.text = it
         }
         return root
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
+        // Make sure bottom navigation is visible when entering this fragment
+        activity?.findViewById<View>(R.id.nav_view)?.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {

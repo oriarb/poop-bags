@@ -13,4 +13,5 @@
     <color name="dark_input_background">#484848</color>
     <color name="yellow">#FFEB3B</color>
     <color name="light_gray">#CCCCCC</color>
+    <color name="welcome_background">#FAFAFA</color>
 </resources>

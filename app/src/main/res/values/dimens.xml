@@ -5,4 +5,6 @@
     <dimen name="button_margin">20dp</dimen>
     <dimen name="button_text_size">18sp</dimen>
     <dimen name="button_height">65dp</dimen>
+    <dimen name="title_size">30sp</dimen>
+    <dimen name="subtitle_size">18sp</dimen>
 </resources>

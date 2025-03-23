@@ -160,12 +160,12 @@ class EditProfileFragment : Fragment() {
 
     private fun observeViewModel() {
         try {
-            viewModel.userProfile.observe(viewLifecycleOwner) { profile ->
+            viewModel.user.observe(viewLifecycleOwner) { profile ->
                 try {
                     binding.usernameInput.setText(profile.username)
                     binding.emailInput.setText(profile.email)
                     
-                    profile.profilePicture?.let { imagePath ->
+                    profile.image?.let { imagePath ->
                         Glide.with(this)
                             .load(imagePath)
                             .circleCrop()

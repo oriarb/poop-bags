@@ -29,7 +29,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "poop_bags_db"
         )
-        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
         .build()
     }
 
@@ -90,6 +90,44 @@ object DatabaseModule {
                 )
             """)
             db.execSQL("CREATE INDEX IF NOT EXISTS index_post_favorites_postId ON post_favorites(postId)")
+        }
+    }
+
+    private val MIGRATION_5_6 = object : Migration(5, 6) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            // שים לב: גם אם הטבלה לא קיימת, ניצור אותה מחדש
+            db.execSQL("DROP TABLE IF EXISTS users")
+
+            db.execSQL("""
+                CREATE TABLE users (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    username TEXT NOT NULL,
+                    password TEXT NOT NULL,
+                    image TEXT,
+                    email TEXT NOT NULL DEFAULT '',
+                    favorites TEXT NOT NULL DEFAULT '[]'
+                )
+            """)
+            
+            // העתקת נתונים מהטבלה הישנה (אם קיימת)
+            try {
+                db.execSQL("""
+                    INSERT INTO users (id, username, password, image, email, favorites)
+                    SELECT userId AS id, username, '' AS password, profilePicture AS image, 
+                           email, '[]' AS favorites
+                    FROM user_profiles
+                """)
+                
+                // מחיקת הטבלה הישנה אם ההעתקה הצליחה
+                db.execSQL("DROP TABLE IF EXISTS user_profiles")
+            } catch(e: Exception) {
+                // אם ההעתקה נכשלה (למשל כי הטבלה הישנה לא קיימת),
+                // נוסיף משתמש ברירת מחדל
+                db.execSQL("""
+                    INSERT INTO users (id, username, password, image, email, favorites)
+                    VALUES ('default', 'Guest', '', NULL, '', '[]')
+                """)
+            }
         }
     }
 

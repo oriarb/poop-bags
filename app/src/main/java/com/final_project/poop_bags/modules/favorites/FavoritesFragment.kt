@@ -94,42 +94,9 @@ class FavoritesFragment : Fragment() {
                             }
                         }
                         
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                                try {
-                                    viewModel.isPostLiked(post.postId).collect { isLiked ->
-                                        favoriteItem.bind(
-                                            post = post.copy(isFavorite = true),
-                                            config = PostItemView.ViewConfig(
-                                                isFavorite = true,
-                                                isLikeEnabled = true
-                                            ),
-                                            onFavoriteClick = { 
-                                                try {
-                                                    viewModel.removeFromFavorites(it)
-                                                } catch (e: Exception) {
-                                                    Snackbar.make(binding.root, "Error removing from favorites: ${e.message}", Snackbar.LENGTH_LONG).show()
-                                                }
-                                            },
-                                            onLikeClick = { 
-                                                try {
-                                                    viewModel.toggleLike(it)
-                                                } catch (e: Exception) {
-                                                    Snackbar.make(binding.root, "Error toggling like: ${e.message}", Snackbar.LENGTH_LONG).show()
-                                                }
-                                            },
-                                            isLiked = isLiked
-                                        )
-                                    }
-                                } catch (e: Exception) {
-                                    if (e.javaClass.simpleName != "CancellationException") {
-                                        Snackbar.make(binding.root, "Error checking if post is liked: ${e.message}", Snackbar.LENGTH_LONG).show()
-                                    }
-                                }
-                            }
-                        }
-                        
                         binding.favoritesContainer.addView(favoriteItem)
+                        
+                        bindFavorite(post, favoriteItem)
                     } catch (e: Exception) {
                         Snackbar.make(binding.root, "Error creating favorite item: ${e.message}", Snackbar.LENGTH_LONG).show()
                     }
@@ -137,6 +104,45 @@ class FavoritesFragment : Fragment() {
             }
         } catch (e: Exception) {
             Snackbar.make(binding.root, "Error updating favorites list: ${e.message}", Snackbar.LENGTH_LONG).show()
+        }
+    }
+
+    private fun bindFavorite(post: Post, favoriteItem: PostItemView) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    try {
+                        android.util.Log.d("FavoritesFragment", "Checking if post is liked: ${post.postId}")
+                        viewModel.isPostLiked(post.postId).collect { isLiked ->
+                            android.util.Log.d("FavoritesFragment", "Post ${post.postId} liked status: $isLiked")
+                            favoriteItem.bind(
+                                post = post.copy(isFavorite = true),
+                                config = PostItemView.ViewConfig(
+                                    isFavorite = true,
+                                    isLikeEnabled = true
+                                ),
+                                onFavoriteClick = { clickedPost -> 
+                                    android.util.Log.d("FavoritesFragment", "Favorite button clicked for post: ${clickedPost.postId}")
+                                    viewModel.removeFromFavorites(clickedPost)
+                                },
+                                onLikeClick = { clickedPost -> 
+                                    android.util.Log.d("FavoritesFragment", "Like button clicked for post: ${clickedPost.postId}")
+                                    viewModel.toggleLike(clickedPost)
+                                },
+                                isLiked = isLiked
+                            )
+                        }
+                    } catch (e: Exception) {
+                        if (e.javaClass.simpleName != "CancellationException") {
+                            android.util.Log.e("FavoritesFragment", "Error checking if post is liked", e)
+                            Snackbar.make(binding.root, "Error checking if post is liked: ${e.message}", Snackbar.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("FavoritesFragment", "Error in lifecycle scope for post binding", e)
+                Snackbar.make(binding.root, "Error in lifecycle scope for post binding: ${e.message}", Snackbar.LENGTH_LONG).show()
+            }
         }
     }
 

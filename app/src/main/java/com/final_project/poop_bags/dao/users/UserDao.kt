@@ -4,19 +4,22 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.final_project.poop_bags.models.UserProfile
+import com.final_project.poop_bags.models.User
 
 @Dao
 interface UserDao {
-    @Query("SELECT * FROM user_profiles LIMIT 1")
-    suspend fun getUserProfile(): UserProfile?
+    @Query("SELECT * FROM users LIMIT 1")
+    suspend fun getUserProfile(): User?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserProfile(userProfile: UserProfile)
+    suspend fun insertUserProfile(user: User)
 
-    @Query("UPDATE user_profiles SET username = :username, email = :email, profilePicture = :profilePicture WHERE userId = :userId")
-    suspend fun updateUserProfile(userId: String, username: String, email: String, profilePicture: String?)
+    @Query("UPDATE users SET username = :username, password = :password, image = :image WHERE id = :id")
+    suspend fun updateUserProfile(id: String, username: String, password: String, image: String?)
 
-    @Query("UPDATE user_profiles SET profilePicture = :pictureUri")
-    suspend fun updateProfilePicture(pictureUri: String?)
+    @Query("UPDATE users SET image = :imageUri")
+    suspend fun updateProfilePicture(imageUri: String?)
+    
+    @Query("UPDATE users SET favorites = :favorites WHERE id = :userId")
+    suspend fun updateFavorites(userId: String, favorites: List<String>)
 } 

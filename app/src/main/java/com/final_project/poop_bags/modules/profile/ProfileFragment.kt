@@ -109,10 +109,10 @@ class ProfileFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.userProfile.observe(viewLifecycleOwner) { profile ->
+        viewModel.user.observe(viewLifecycleOwner) { profile ->
             binding.toolbarTitle.text = getString(R.string.welcome_user, profile.username)
             
-            profile.profilePicture?.let { imagePath ->
+            profile.image?.let { imagePath ->
                 Glide.with(this)
                     .load(imagePath)
                     .circleCrop()

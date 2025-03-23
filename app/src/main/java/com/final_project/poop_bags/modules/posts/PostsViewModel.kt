@@ -35,7 +35,7 @@ class PostsViewModel @Inject constructor(
     private fun loadUserPosts() {
         viewModelScope.launch {
             try {
-                val userId = userRepository.getUserProfile().userId
+                val userId = userRepository.getUserProfile().id
                 postRepository.getUserPosts(userId)
                     .catch { e ->
                         _error.postValue("Error loading posts: ${e.message}")

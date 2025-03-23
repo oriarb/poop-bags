@@ -1,7 +1,7 @@
 package com.final_project.poop_bags.repository
 
 import android.net.Uri
-import com.final_project.poop_bags.models.UserProfile
+import com.final_project.poop_bags.models.User
 import com.final_project.poop_bags.dao.users.UserDao
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,7 +13,7 @@ class UserRepository @Inject constructor(
     private val userDao: UserDao,
     private val imageCache: ImageCache
 ) {
-    suspend fun getUserProfile(): UserProfile {
+    suspend fun getUserProfile(): User {
         return userDao.getUserProfile() ?: createDefaultProfile()
     }
 
@@ -23,10 +23,10 @@ class UserRepository @Inject constructor(
                 val cachedImagePath = imageCache.cacheImage(uri)
                 val currentProfile = getUserProfile()
                 userDao.updateUserProfile(
-                    userId = currentProfile.userId,
+                    id = currentProfile.id,
                     username = currentProfile.username,
-                    email = currentProfile.email,
-                    profilePicture = cachedImagePath
+                    password = currentProfile.password,
+                    image = cachedImagePath
                 )
             } catch (e: Exception) {
                 throw IllegalStateException("Failed to update profile picture", e)
@@ -34,32 +34,43 @@ class UserRepository @Inject constructor(
         }
     }
 
-    suspend fun updateUserProfile(username: String, email: String) {
+    suspend fun updateUserProfile(username: String, password: String) {
         withContext(Dispatchers.IO) {
             val currentProfile = getUserProfile()
             userDao.updateUserProfile(
-                userId = currentProfile.userId,
+                id = currentProfile.id,
                 username = username,
-                email = email,
-                profilePicture = currentProfile.profilePicture
+                password = password,
+                image = currentProfile.image
             )
         }
     }
+    
+    suspend fun updateFavorites(favorites: List<String>) {
+        withContext(Dispatchers.IO) {
+            val currentProfile = getUserProfile()
+            userDao.updateFavorites(currentProfile.id, favorites)
+        }
+    }
 
-    private suspend fun createDefaultProfile(): UserProfile {
-        val defaultProfile = UserProfile(
-            userId = "default",
+    private suspend fun createDefaultProfile(): User {
+        val defaultProfile = User(
+            id = "default",
             username = "Guest",
-            email = "guest12@gmail.com",
-            profilePicture = null,
-            favouritesCount = 0,
-            postsCount = 0
+            password = "",
+            image = null,
+            favorites = emptyList(),
+            email = ""
         )
         userDao.insertUserProfile(defaultProfile)
         return defaultProfile
     }
 
     suspend fun getCurrentUserId(): String {
-        return getUserProfile().userId
+        return getUserProfile().id
+    }
+    
+    suspend fun getUserFavorites(): List<String> {
+        return getUserProfile().favorites
     }
 }

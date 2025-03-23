@@ -4,8 +4,6 @@ import com.final_project.poop_bags.dao.posts.PostLikeDao
 import com.final_project.poop_bags.models.Post
 import com.final_project.poop_bags.dao.posts.PostDao
 import com.final_project.poop_bags.models.PostLike
-import com.final_project.poop_bags.dao.posts.PostFavoriteDao
-import com.final_project.poop_bags.models.PostFavorite
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -13,34 +11,31 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.emitAll
 
 @Singleton
 class PostRepository @Inject constructor(
     private val postDao: PostDao,
     private val postLikeDao: PostLikeDao,
-    private val postFavoriteDao: PostFavoriteDao,
     private val userRepository: UserRepository
 ) {
     fun getFavoritePosts(): Flow<List<Post>> = flow {
-        val userId = userRepository.getCurrentUserId()
-        emitAll(postFavoriteDao.getFavoritePosts(userId))
+        val favorites = userRepository.getUserFavorites()
+        val allPosts = postDao.getAllPosts()
+        emit(allPosts.filter { it.postId in favorites })
     }.flowOn(Dispatchers.IO)
 
     suspend fun toggleFavorite(postId: String) {
         withContext(Dispatchers.IO) {
-            val userId = userRepository.getCurrentUserId()
-            val existingFavorite = postFavoriteDao.getFavorite(postId, userId)
-
-            if (existingFavorite != null) {
-                postFavoriteDao.deleteFavorite(existingFavorite)
+            val currentProfile = userRepository.getUserProfile()
+            val favorites = currentProfile.favorites.toMutableList()
+            
+            if (postId in favorites) {
+                favorites.remove(postId)
             } else {
-                val newFavorite = PostFavorite(
-                    postId = postId,
-                    userId = userId
-                )
-                postFavoriteDao.insertFavorite(newFavorite)
+                favorites.add(postId)
             }
+            
+            userRepository.updateFavorites(favorites)
         }
     }
 
@@ -76,24 +71,30 @@ class PostRepository @Inject constructor(
 
     suspend fun toggleLike(postId: String) {
         withContext(Dispatchers.IO) {
-            val userId = userRepository.getCurrentUserId()
-            val existingLike = postLikeDao.getLike(postId, userId)
-            val post = postDao.getPostById(postId)
-            
-            if (existingLike != null) {
-                postLikeDao.deleteLike(existingLike)
-                post?.let {
-                    postDao.updateLikesCount(postId, it.likesCount - 1)
+            try {
+                val userId = userRepository.getCurrentUserId()
+                val existingLike = postLikeDao.getLike(postId, userId)
+                
+                if (existingLike != null) {
+                    postLikeDao.deleteLike(existingLike)
+                    val post = postDao.getPostById(postId)
+                    post?.let {
+                        val newCount = maxOf(0, it.likesCount - 1)
+                        postDao.updateLikesCount(postId, newCount)
+                    }
+                } else {
+                    val newLike = PostLike(
+                        postId = postId,
+                        userId = userId
+                    )
+                    postLikeDao.insertLike(newLike)
+                    val post = postDao.getPostById(postId)
+                    post?.let {
+                        postDao.updateLikesCount(postId, it.likesCount + 1)
+                    }
                 }
-            } else {
-                val newLike = PostLike(
-                    postId = postId,
-                    userId = userId
-                )
-                postLikeDao.insertLike(newLike)
-                post?.let {
-                    postDao.updateLikesCount(postId, it.likesCount + 1)
-                }
+            } catch (e: Exception) {
+                throw IllegalStateException("Failed to toggle like", e)
             }
         }
     }
@@ -103,15 +104,11 @@ class PostRepository @Inject constructor(
         val like = postLikeDao.getLike(postId, userId)
         emit(like != null)
     }.flowOn(Dispatchers.IO)
-    
-    fun getPostLikesCount(postId: String): Flow<Int> {
-        return postLikeDao.getLikesCount(postId)
-    }
 
     suspend fun isPostFavorite(postId: String): Boolean {
         return withContext(Dispatchers.IO) {
-            val userId = userRepository.getCurrentUserId()
-            postFavoriteDao.getFavorite(postId, userId) != null
+            val favorites = userRepository.getUserFavorites()
+            postId in favorites
         }
     }
 

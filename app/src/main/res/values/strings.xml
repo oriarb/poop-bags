@@ -40,7 +40,7 @@
     <string name="ui_setup_error">UI setup error: %1$s</string>
     <string name="navigation_error">Navigation error: %1$s</string>
     <string name="welcome_title_text">Welcome To PoopBags!</string>
-    <string name="welcome_subtitle_text">Join the community of responsible pet owners</string>
+    <string name="welcome_subtitle_text">Join the community\n of responsible pet owners</string>
     <string name="sign_in_text">Sign In</string>
     <string name="register_text">Register</string>
     <string name="welcome_image_description">Welcome Image</string>

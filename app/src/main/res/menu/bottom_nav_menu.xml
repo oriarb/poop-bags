@@ -7,9 +7,9 @@
         android:title="@string/title_explore" />
 
     <item
-        android:id="@+id/navigation_add_post"
+        android:id="@+id/navigation_add_station"
         android:icon="@drawable/ic_add_circle"
-        android:title="@string/title_add_post" />
+        android:title="@string/title_add_station" />
 
     <item
         android:id="@+id/navigation_profile"

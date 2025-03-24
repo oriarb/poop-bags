@@ -4,61 +4,94 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.final_project.poop_bags.models.Post
-import com.final_project.poop_bags.repository.PostRepository
+import com.final_project.poop_bags.models.Station
+import com.final_project.poop_bags.repository.StationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val repository: PostRepository
+    private val repository: StationRepository
 ) : ViewModel() {
     
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
     
-    val favoritePosts = repository.getFavoritePosts()
-        .catch { e -> 
-            if (e.javaClass.simpleName != "CancellationException") {
-                _error.postValue("Error loading favorites: ${e.message}")
-            }
-            emit(emptyList())
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    private val _favoriteStations = MutableStateFlow<List<Station>>(emptyList())
+    val favoriteStations = _favoriteStations.asStateFlow()
 
-    fun removeFromFavorites(post: Post) {
+    init {
+        viewModelScope.launch {
+            repository.getFavoriteStations()
+                .catch { e -> 
+                    if (e.javaClass.simpleName != "CancellationException") {
+                        _error.postValue("Error loading favorites: ${e.message}")
+                    }
+                    emit(emptyList())
+                }
+                .collect { stations ->
+                    _favoriteStations.value = stations
+                }
+        }
+    }
+
+    fun removeFromFavorites(station: Station) {
         viewModelScope.launch {
             try {
-                repository.toggleFavorite(post.postId)
+                repository.toggleFavorite(station.id)
+                
+                val updatedStations = _favoriteStations.value.toMutableList()
+                val stationIndex = updatedStations.indexOfFirst { it.id == station.id }
+                
+                if (stationIndex >= 0) {
+                    updatedStations.removeAt(stationIndex)
+                    _favoriteStations.value = updatedStations
+                }
+                
             } catch (e: Exception) {
                 _error.postValue("Failed to remove from favorites: ${e.message}")
             }
         }
     }
 
-    fun toggleLike(post: Post) {
+    fun toggleLike(station: Station) {
         viewModelScope.launch {
             try {
-                repository.toggleLike(post.postId)
+                repository.toggleLike(station.id)
+                
+                val updatedStations = _favoriteStations.value.toMutableList()
+                val index = updatedStations.indexOfFirst { it.id == station.id }
+                
+                if (index >= 0) {
+                    val currentStation = updatedStations[index]
+                    val isLiked = repository.isStationLiked(station.id).first()
+                    val userId = repository.getCurrentUserId()
+                    
+                    val updatedLikes = if (isLiked) {
+                        currentStation.likes + userId
+                    } else {
+                        currentStation.likes.filter { it != userId }
+                    }
+                    
+                    updatedStations[index] = currentStation.copy(likes = updatedLikes)
+                    _favoriteStations.value = updatedStations
+                }
             } catch (e: Exception) {
                 _error.postValue("Failed to toggle like: ${e.message}")
             }
         }
     }
 
-    fun isPostLiked(postId: String): Flow<Boolean> = 
-        repository.isPostLiked(postId)
+    fun isStationLiked(stationId: String): Flow<Boolean> = 
+        repository.isStationLiked(stationId)
             .catch { e ->
-                _error.postValue("Error checking if post is liked: ${e.message}")
+                _error.postValue("Error checking if station is liked: ${e.message}")
                 emit(false)
             }
 } 

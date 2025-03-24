@@ -84,6 +84,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
+    implementation ("com.google.code.gson:gson:2.10.1")
 
     // Glide
     implementation(libs.glide)
@@ -92,4 +93,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit.v115)
     androidTestImplementation(libs.androidx.espresso.core.v351)
+
+
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.final_project.poop_bags.models.UserProfile
+import com.final_project.poop_bags.models.User
 import com.final_project.poop_bags.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,8 +15,8 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _userProfile = MutableLiveData<UserProfile>()
-    val userProfile: LiveData<UserProfile> = _userProfile
+    private val _user = MutableLiveData<User>()
+    val user: LiveData<User> = _user
 
     private val _error = MutableLiveData<String?>(null)
     val error: LiveData<String?> = _error
@@ -28,7 +28,7 @@ class ProfileViewModel @Inject constructor(
     fun loadUserProfile() {
         viewModelScope.launch {
             try {
-                _userProfile.value = userRepository.getUserProfile()
+                _user.value = userRepository.getUserProfile()
             } catch (e: Exception) {
                 _error.value = "Failed to load profile: ${e.message}"
             }

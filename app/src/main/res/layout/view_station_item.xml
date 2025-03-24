@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -10,25 +11,27 @@
         android:padding="16dp">
 
         <ImageView
-            android:id="@+id/postImage"
+            android:id="@+id/stationImage"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:contentDescription="@string/post_image"
+            android:contentDescription="@string/station_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/titleText"
+            android:id="@+id/stationTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
             android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/postImage"
-            app:layout_constraintTop_toTopOf="@id/postImage" />
+            app:layout_constraintStart_toEndOf="@id/stationImage"
+            app:layout_constraintTop_toTopOf="@id/stationImage"
+            tools:text="Station Name" />
 
         <TextView
             android:id="@+id/addressText"
@@ -40,16 +43,16 @@
             android:textSize="14sp"
             android:textColor="@android:color/darker_gray"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/postImage"
-            app:layout_constraintTop_toBottomOf="@id/titleText"
-            tools:text="Address" />
+            app:layout_constraintStart_toEndOf="@id/stationImage"
+            app:layout_constraintTop_toBottomOf="@id/stationTitle"
+            tools:text="Coordinates" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="@id/postImage"
-            app:layout_constraintStart_toEndOf="@id/postImage"
+            app:layout_constraintBottom_toBottomOf="@id/stationImage"
+            app:layout_constraintStart_toEndOf="@id/stationImage"
             android:layout_marginStart="16dp">
 
             <ImageButton
@@ -66,13 +69,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="16dp"
+                android:textColor="@color/white"
                 tools:text="0" />
 
             <ImageView
                 android:id="@+id/commentIcon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:contentDescription="@string/commentButton"
+                android:contentDescription="@string/comments"
                 android:src="@drawable/ic_comment" />
 
             <TextView
@@ -80,6 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
+                android:textColor="@color/white"
                 tools:text="0" />
         </LinearLayout>
 
@@ -117,7 +122,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/edit_profile"
+                android:contentDescription="@string/edit_station"
                 android:src="@drawable/ic_edit"
                 android:visibility="gone"
                 app:tint="@color/white" />

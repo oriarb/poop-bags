@@ -14,10 +14,10 @@ import androidx.navigation.fragment.findNavController
 import com.final_project.poop_bags.databinding.FragmentFavoritesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CancellationException
 import com.final_project.poop_bags.models.Station
 import com.final_project.poop_bags.common.views.StationItemView
+import android.widget.Toast
 
 @AndroidEntryPoint
 class FavoritesFragment : Fragment() {
@@ -48,7 +48,7 @@ class FavoritesFragment : Fragment() {
                 findNavController().navigateUp()
             }
         } catch (e: Exception) {
-            Snackbar.make(binding.root, "Navigation error: ${e.message}", Snackbar.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Navigation error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -63,12 +63,12 @@ class FavoritesFragment : Fragment() {
                     } catch (e: CancellationException) {
                         // Ignore cancellation exceptions
                     } catch (e: Exception) {
-                        Snackbar.make(binding.root, "Error loading favorites: ${e.message}", Snackbar.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "Error loading favorites: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         } catch (e: Exception) {
-            Snackbar.make(binding.root, "Error in view model observation: ${e.message}", Snackbar.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Error in view model observation: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -98,12 +98,12 @@ class FavoritesFragment : Fragment() {
                         
                         bindFavorite(station, favoriteItem)
                     } catch (e: Exception) {
-                        Snackbar.make(binding.root, "Error creating favorite item: ${e.message}", Snackbar.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "Error creating favorite item: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         } catch (e: Exception) {
-            Snackbar.make(binding.root, "Error updating favorites list: ${e.message}", Snackbar.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Error updating favorites list: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -130,12 +130,12 @@ class FavoritesFragment : Fragment() {
                         }
                     } catch (e: Exception) {
                         if (e.javaClass.simpleName != "CancellationException") {
-                            Snackbar.make(binding.root, "Error checking if station is liked: ${e.message}", Snackbar.LENGTH_LONG).show()
+                            Toast.makeText(requireContext(), "Error checking if station is liked: ${e.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             } catch (e: Exception) {
-                Snackbar.make(binding.root, "Error in lifecycle scope for station binding: ${e.message}", Snackbar.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Error in lifecycle scope for station binding: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }

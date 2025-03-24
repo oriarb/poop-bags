@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.final_project.poop_bags.R
 import com.final_project.poop_bags.models.Station
 import com.final_project.poop_bags.databinding.ViewStationItemBinding
-import com.google.android.material.snackbar.Snackbar
+import android.widget.Toast
 
 class StationItemView @JvmOverloads constructor(
     context: Context,
@@ -134,6 +134,6 @@ class StationItemView @JvmOverloads constructor(
     }
     
     private fun showError(message: String) {
-        Snackbar.make(this, message, Snackbar.LENGTH_LONG).show()
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 } 

@@ -18,7 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.final_project.poop_bags.R
 import com.final_project.poop_bags.databinding.FragmentEditProfileBinding
-import com.google.android.material.snackbar.Snackbar
+import android.widget.Toast
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,7 +37,7 @@ class EditProfileFragment : Fragment() {
         if (permissions.all { it.value }) {
             showImagePickerDialog()
         } else {
-            Snackbar.make(binding.root, "Camera permission required to take photos", Snackbar.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Camera permission required to take photos", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -81,7 +81,7 @@ class EditProfileFragment : Fragment() {
                 val email = binding.emailInput.text.toString()
                 viewModel.updateProfile(username, email)
             } catch (e: Exception) {
-                Snackbar.make(binding.root, "Error saving profile: ${e.message}", Snackbar.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Error saving profile: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -94,7 +94,7 @@ class EditProfileFragment : Fragment() {
                     requestPermissionLauncher.launch(arrayOf(android.Manifest.permission.CAMERA))
                 }
             } catch (e: Exception) {
-                Snackbar.make(binding.root, "Error accessing camera: ${e.message}", Snackbar.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Error accessing camera: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -134,10 +134,10 @@ class EditProfileFragment : Fragment() {
             tempImageUri?.let { uri ->
                 takePictureLauncher.launch(uri)
             } ?: run {
-                Snackbar.make(binding.root, "Failed to create image file", Snackbar.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Failed to create image file", Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
-            Snackbar.make(binding.root, "Error taking photo: ${e.message}", Snackbar.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Error taking photo: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -145,7 +145,7 @@ class EditProfileFragment : Fragment() {
         try {
             getContent.launch("image/*")
         } catch (e: Exception) {
-            Snackbar.make(binding.root, "Error opening gallery: ${e.message}", Snackbar.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Error opening gallery: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -173,14 +173,13 @@ class EditProfileFragment : Fragment() {
                             .error(R.drawable.default_profile)
                             .into(binding.profileImage)
                     } ?: run {
-                        // Handle null profile picture
                         Glide.with(this)
                             .load(R.drawable.default_profile)
                             .circleCrop()
                             .into(binding.profileImage)
                     }
                 } catch (e: Exception) {
-                    Snackbar.make(binding.root, "Error loading profile data: ${e.message}", Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Error loading profile data: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -195,18 +194,18 @@ class EditProfileFragment : Fragment() {
 
             viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
                 if (errorMessage.isNotEmpty()) {
-                    Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
 
             viewModel.saveSuccess.observe(viewLifecycleOwner) { success ->
                 if (success) {
-                    Snackbar.make(binding.root, "Profile updated successfully", Snackbar.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show()
                     findNavController().navigateUp()
                 }
             }
         } catch (e: Exception) {
-            Snackbar.make(binding.root, "Error in view model observation: ${e.message}", Snackbar.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Error in view model observation: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 

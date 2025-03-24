@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.final_project.poop_bags.R
 import com.final_project.poop_bags.databinding.FragmentProfileBinding
 import com.bumptech.glide.Glide
-import com.google.android.material.snackbar.Snackbar
+import android.widget.Toast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -133,7 +133,7 @@ class ProfileFragment : Fragment() {
     }
     
     private fun showError(message: String) {
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

@@ -17,9 +17,9 @@ import com.final_project.poop_bags.R
 import com.final_project.poop_bags.common.views.StationItemView
 import com.final_project.poop_bags.databinding.FragmentStationsBinding
 import com.final_project.poop_bags.models.Station
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import android.widget.Toast
 
 @AndroidEntryPoint
 class StationsFragment : Fragment() {
@@ -61,14 +61,14 @@ class StationsFragment : Fragment() {
 
         viewModel.success.observe(viewLifecycleOwner) { message ->
             message?.let {
-                Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 viewModel.clearSuccess()
             }
         }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("success_message")?.observe(viewLifecycleOwner) { message ->
             message?.let {
-                Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 findNavController().currentBackStackEntry?.savedStateHandle?.remove<String>("success_message")
                 viewModel.refreshStations()
             }
@@ -76,7 +76,7 @@ class StationsFragment : Fragment() {
 
         viewModel.error.observe(viewLifecycleOwner) { errorMsg ->
             errorMsg?.let {
-                showError(it)
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 viewModel.clearError()
             }
         }
@@ -151,7 +151,7 @@ class StationsFragment : Fragment() {
     }
 
     private fun showError(message: String) {
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

@@ -1,5 +1,6 @@
 package com.final_project.poop_bags
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.setupWithNavController
@@ -7,16 +8,24 @@ import com.final_project.poop_bags.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.navigation.fragment.NavHostFragment
+import com.final_project.poop_bags.models.FirebaseModel
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var firebaseModel: FirebaseModel = FirebaseModel.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (!firebaseModel.isLoggedIn()) {
+            val intent = Intent(this, WelcomeActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         binding.root.post {
             val navView: BottomNavigationView = binding.navView

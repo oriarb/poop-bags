@@ -62,7 +62,7 @@
         app:startIconTint="@color/transparent_input_color">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/email_input"
+            android:id="@+id/email_input2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
@@ -91,7 +91,7 @@
         app:endIconTint="@color/transparent_input_color">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/password_input"
+            android:id="@+id/password_input2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
@@ -101,7 +101,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/sign_in_button"
+        android:id="@+id/sign_in_button2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"
         android:layout_marginStart="32dp"

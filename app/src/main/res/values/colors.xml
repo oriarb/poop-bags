@@ -16,4 +16,5 @@
     <color name="dark_background">#333333</color>
     <color name="button_light_background">#FFFFFF</color>
     <color name="button_dark_background">#555555</color>
+    <color name="transparent_input_color">#7f7f7f</color>
 </resources>

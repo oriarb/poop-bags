@@ -20,7 +20,7 @@
             android:layout_gravity="start"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back"
-            android:contentDescription="@string/back_button"
+            android:contentDescription="@string/back_button_description"
             app:tint="@color/white" />
 
         <TextView

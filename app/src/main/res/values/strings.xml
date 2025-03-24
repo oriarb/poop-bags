@@ -5,6 +5,7 @@
     <string name="title_profile">Profile</string>
     <string name="favourites">favourites</string>
     <string name="welcome_user">Welcome, %1$s</string>
+    <string name="posts">posts</string>
     <string name="username_placeholder">username placeholder</string>
     <string name="edit_profile">edit profile</string>
     <string name="profile_picture">Profile picture</string>
@@ -17,9 +18,13 @@
     <string name="choose_image_source">choose image source</string>
     <string name="image_sources">image sources</string>
     <string name="back_button">Navigate back</string>
+    <string name="back_button_description">Navigate back</string>
     <string name="enter_username">Enter username</string>
     <string name="enter_email">Enter email address</string>
-    <string name="no_favorites">no favorites yet</string>
+    <string name="no_favorites">No favorite posts yet</string>
+    <string name="post_image">Post image</string>
+    <string name="no_posts">No posts yet</string>
+    <string name="my_posts">My Posts</string>
     <string name="likes_count">%d likes</string>
     <string name="delete">Delete</string>
     <string name="like_button">Like</string>
@@ -27,10 +32,10 @@
     <string name="title_explore">Explore</string>
     <string name="add_image">Add Image</string>
     <string name="upload">upload</string>
-    <string name="station_name">station name</string>
-    <string name="address">address</string>
-    <string name="back">back</string>
-    <string name="add_post">add post</string>
+    <string name="station_name">Station Name</string>
+    <string name="address">Address</string>
+    <string name="back">Back</string>
+    <string name="add_post">Add Post</string>
     <string name="ui_setup_error">UI setup error: %1$s</string>
     <string name="navigation_error">Navigation error: %1$s</string>
     <string name="station_image">station image</string>
@@ -49,4 +54,14 @@
     <string name="no_stations_found">no stations found</string>
     <string name="title_add_station">add station</string>
     <string name="title_edit_station">edit station</string>
+    <string name="welcome_title_text">Welcome To PoopBags!</string>
+    <string name="welcome_subtitle_text">Join the community\n of responsible pet owners</string>
+    <string name="sign_in_text">Sign In</string>
+    <string name="sign_in_subtitle">Please sign in to continue</string>
+    <string name="register_text">Register</string>
+    <string name="register_subtitle">Please register to continue</string>
+    <string name="welcome_image_description">Welcome Image</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="username_hint">Username</string>"
 </resources>

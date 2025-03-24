@@ -38,9 +38,9 @@ class ProfileFragment : Fragment() {
             },
             ProfileButton(
                 id = View.generateViewId(),
-                textRes = R.string.posts
+                textRes = R.string.my_stations
             ) {
-                findNavController().navigate(R.id.action_profileFragment_to_postsFragment)
+                findNavController().navigate(R.id.action_profileFragment_to_stationsFragment)
             }
         )
     }

@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.final_project.poop_bags.models.Post
-import com.final_project.poop_bags.repository.PostRepository
+import com.final_project.poop_bags.models.Station
+import com.final_project.poop_bags.repository.StationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -17,82 +17,81 @@ import kotlinx.coroutines.flow.first
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val repository: PostRepository
+    private val repository: StationRepository
 ) : ViewModel() {
     
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
     
-    private val _favoritePosts = MutableStateFlow<List<Post>>(emptyList())
-    val favoritePosts = _favoritePosts.asStateFlow()
+    private val _favoriteStations = MutableStateFlow<List<Station>>(emptyList())
+    val favoriteStations = _favoriteStations.asStateFlow()
 
     init {
         viewModelScope.launch {
-            repository.getFavoritePosts()
+            repository.getFavoriteStations()
                 .catch { e -> 
                     if (e.javaClass.simpleName != "CancellationException") {
                         _error.postValue("Error loading favorites: ${e.message}")
                     }
                     emit(emptyList())
                 }
-                .collect { posts ->
-                    _favoritePosts.value = posts
+                .collect { stations ->
+                    _favoriteStations.value = stations
                 }
         }
     }
 
-    fun removeFromFavorites(post: Post) {
+    fun removeFromFavorites(station: Station) {
         viewModelScope.launch {
             try {
-                repository.toggleFavorite(post.postId)
+                repository.toggleFavorite(station.id)
                 
-                val updatedPosts = _favoritePosts.value.toMutableList()
-                val postIndex = updatedPosts.indexOfFirst { it.postId == post.postId }
+                val updatedStations = _favoriteStations.value.toMutableList()
+                val stationIndex = updatedStations.indexOfFirst { it.id == station.id }
                 
-                if (postIndex >= 0) {
-                    updatedPosts.removeAt(postIndex)
-                    _favoritePosts.value = updatedPosts
+                if (stationIndex >= 0) {
+                    updatedStations.removeAt(stationIndex)
+                    _favoriteStations.value = updatedStations
                 }
                 
-                android.util.Log.d("FavoritesViewModel", "Toggled favorite for post: ${post.postId} and updated UI")
             } catch (e: Exception) {
-                android.util.Log.e("FavoritesViewModel", "Failed to toggle favorite", e)
                 _error.postValue("Failed to remove from favorites: ${e.message}")
             }
         }
     }
 
-    fun toggleLike(post: Post) {
+    fun toggleLike(station: Station) {
         viewModelScope.launch {
             try {
-                repository.toggleLike(post.postId)
+                repository.toggleLike(station.id)
                 
-                val updatedPosts = _favoritePosts.value.toMutableList()
-                val index = updatedPosts.indexOfFirst { it.postId == post.postId }
+                val updatedStations = _favoriteStations.value.toMutableList()
+                val index = updatedStations.indexOfFirst { it.id == station.id }
                 
                 if (index >= 0) {
-                    val currentPost = updatedPosts[index]
-                    val isLiked = repository.isPostLiked(post.postId).first()
+                    val currentStation = updatedStations[index]
+                    val isLiked = repository.isStationLiked(station.id).first()
+                    val userId = repository.getCurrentUserId()
                     
-                    val newLikesCount = if (isLiked) currentPost.likesCount + 1 else maxOf(0, currentPost.likesCount - 1)
-                    updatedPosts[index] = currentPost.copy(likesCount = newLikesCount)
-                    _favoritePosts.value = updatedPosts
+                    val updatedLikes = if (isLiked) {
+                        currentStation.likes + userId
+                    } else {
+                        currentStation.likes.filter { it != userId }
+                    }
                     
-                    android.util.Log.d("FavoritesViewModel", 
-                        "Updated post in UI. ID: ${post.postId}, New likes: $newLikesCount, isLiked: $isLiked")
+                    updatedStations[index] = currentStation.copy(likes = updatedLikes)
+                    _favoriteStations.value = updatedStations
                 }
             } catch (e: Exception) {
-                android.util.Log.e("FavoritesViewModel", "Failed to toggle like", e)
                 _error.postValue("Failed to toggle like: ${e.message}")
             }
         }
     }
 
-    fun isPostLiked(postId: String): Flow<Boolean> = 
-        repository.isPostLiked(postId)
+    fun isStationLiked(stationId: String): Flow<Boolean> = 
+        repository.isStationLiked(stationId)
             .catch { e ->
-                android.util.Log.e("FavoritesViewModel", "Error checking if post is liked", e)
-                _error.postValue("Error checking if post is liked: ${e.message}")
+                _error.postValue("Error checking if station is liked: ${e.message}")
                 emit(false)
             }
 } 

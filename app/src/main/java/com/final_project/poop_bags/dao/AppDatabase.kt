@@ -4,29 +4,22 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.final_project.poop_bags.models.User
 import com.final_project.poop_bags.dao.users.UserDao
-import com.final_project.poop_bags.models.Post
-import com.final_project.poop_bags.dao.posts.PostDao
-import com.final_project.poop_bags.dao.posts.PostFavoriteDao
-import com.final_project.poop_bags.dao.posts.PostLikeDao
-import com.final_project.poop_bags.models.PostLike
-import com.final_project.poop_bags.models.PostFavorite
 import androidx.room.TypeConverters
-import com.final_project.poop_bags.utils.StringListConverter
+import com.final_project.poop_bags.dao.station.StationDao
+import com.final_project.poop_bags.models.Station
+import com.final_project.poop_bags.utils.Converters
+
 
 @Database(
     entities = [
         User::class,
-        Post::class,
-        PostLike::class,
-        PostFavorite::class
+        Station::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
-@TypeConverters(StringListConverter::class)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
-    abstract fun postDao(): PostDao
-    abstract fun postLikeDao(): PostLikeDao
-    abstract fun postFavoriteDao(): PostFavoriteDao
+    abstract fun stationDao(): StationDao
 }

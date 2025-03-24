@@ -1,6 +1,5 @@
 package com.final_project.poop_bags.modules.favorites
 
-import com.final_project.poop_bags.common.views.PostItemView
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +11,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.final_project.poop_bags.models.Post
 import com.final_project.poop_bags.databinding.FragmentFavoritesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CancellationException
+import com.final_project.poop_bags.models.Station
+import com.final_project.poop_bags.common.views.StationItemView
 
 @AndroidEntryPoint
 class FavoritesFragment : Fragment() {
@@ -57,8 +57,8 @@ class FavoritesFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     try {
-                        viewModel.favoritePosts.collect { posts ->
-                            updateFavoritesList(posts)
+                        viewModel.favoriteStations.collect { stations ->
+                            updateFavoritesList(stations)
                         }
                     } catch (e: CancellationException) {
                         // Ignore cancellation exceptions
@@ -72,20 +72,20 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    private fun updateFavoritesList(posts: List<Post>) {
+    private fun updateFavoritesList(stations: List<Station>) {
         try {
             binding.favoritesContainer.removeAllViews()
             
-            if (posts.isEmpty()) {
+            if (stations.isEmpty()) {
                 binding.emptyStateText.visibility = View.VISIBLE
                 binding.scrollView.visibility = View.GONE
             } else {
                 binding.emptyStateText.visibility = View.GONE
                 binding.scrollView.visibility = View.VISIBLE
                 
-                posts.forEach { post ->
+                stations.forEach { station ->
                     try {
-                        val favoriteItem = PostItemView(requireContext()).apply {
+                        val favoriteItem = StationItemView(requireContext()).apply {
                             layoutParams = LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -96,7 +96,7 @@ class FavoritesFragment : Fragment() {
                         
                         binding.favoritesContainer.addView(favoriteItem)
                         
-                        bindFavorite(post, favoriteItem)
+                        bindFavorite(station, favoriteItem)
                     } catch (e: Exception) {
                         Snackbar.make(binding.root, "Error creating favorite item: ${e.message}", Snackbar.LENGTH_LONG).show()
                     }
@@ -107,41 +107,35 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    private fun bindFavorite(post: Post, favoriteItem: PostItemView) {
+    private fun bindFavorite(station: Station, favoriteItem: StationItemView) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     try {
-                        android.util.Log.d("FavoritesFragment", "Checking if post is liked: ${post.postId}")
-                        viewModel.isPostLiked(post.postId).collect { isLiked ->
-                            android.util.Log.d("FavoritesFragment", "Post ${post.postId} liked status: $isLiked")
+                        viewModel.isStationLiked(station.id).collect { isLiked ->
                             favoriteItem.bind(
-                                post = post.copy(isFavorite = true),
-                                config = PostItemView.ViewConfig(
+                                station = station.copy(isFavorite = true),
+                                config = StationItemView.ViewConfig(
                                     isFavorite = true,
                                     isLikeEnabled = true
                                 ),
-                                onFavoriteClick = { clickedPost -> 
-                                    android.util.Log.d("FavoritesFragment", "Favorite button clicked for post: ${clickedPost.postId}")
-                                    viewModel.removeFromFavorites(clickedPost)
+                                onFavoriteClick = { clickedStation -> 
+                                    viewModel.removeFromFavorites(clickedStation)
                                 },
-                                onLikeClick = { clickedPost -> 
-                                    android.util.Log.d("FavoritesFragment", "Like button clicked for post: ${clickedPost.postId}")
-                                    viewModel.toggleLike(clickedPost)
+                                onLikeClick = { clickedStation -> 
+                                    viewModel.toggleLike(clickedStation)
                                 },
                                 isLiked = isLiked
                             )
                         }
                     } catch (e: Exception) {
                         if (e.javaClass.simpleName != "CancellationException") {
-                            android.util.Log.e("FavoritesFragment", "Error checking if post is liked", e)
-                            Snackbar.make(binding.root, "Error checking if post is liked: ${e.message}", Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(binding.root, "Error checking if station is liked: ${e.message}", Snackbar.LENGTH_LONG).show()
                         }
                     }
                 }
             } catch (e: Exception) {
-                android.util.Log.e("FavoritesFragment", "Error in lifecycle scope for post binding", e)
-                Snackbar.make(binding.root, "Error in lifecycle scope for post binding: ${e.message}", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.root, "Error in lifecycle scope for station binding: ${e.message}", Snackbar.LENGTH_LONG).show()
             }
         }
     }

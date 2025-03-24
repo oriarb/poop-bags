@@ -12,34 +12,31 @@
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_posts"
-        android:name="com.final_project.poop_bags.modules.posts.PostsFragment"
-        android:label="Posts"
-        tools:layout="@layout/fragment_posts">
+        android:id="@+id/navigation_stations"
+        android:name="com.final_project.poop_bags.modules.stations.StationsFragment"
+        android:label="@string/title_stations">
+        <argument
+            android:name="userId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        
         <action
-            android:id="@+id/action_navigation_posts_to_navigation_add_post"
-            app:destination="@id/navigation_add_post"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            android:id="@+id/action_stations_to_add_station"
+            app:destination="@id/navigation_add_station" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_add_post"
-        android:name="com.final_project.poop_bags.modules.addPost.AddPostFragment"
-        android:label="Add Post"
-        tools:layout="@layout/fragment_add_post">
+        android:id="@+id/navigation_add_station"
+        android:name="com.final_project.poop_bags.modules.addStation.AddStationFragment"
+        android:label="@string/title_add_station"
+        tools:layout="@layout/fragment_add_station">
+        
         <argument
-            android:name="postId"
+            android:name="stationId"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_navigation_add_post_to_navigation_profile"
-            app:destination="@id/navigation_profile"
-            app:popUpTo="@id/navigation_profile"
-            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -59,8 +56,8 @@
             android:id="@+id/action_profileFragment_to_favouritesFragment"
             app:destination="@id/favouritesFragment" />
         <action
-            android:id="@+id/action_profileFragment_to_postsFragment"
-            app:destination="@id/postsFragment" />
+            android:id="@+id/action_profileFragment_to_stationsFragment"
+            app:destination="@id/navigation_stations" />
         <action
             android:id="@+id/action_navigation_profile_to_favouritesFragment"
             app:destination="@id/favouritesFragment" />
@@ -79,8 +76,13 @@
         tools:layout="@layout/fragment_favorites" />
 
     <fragment
-        android:id="@+id/postsFragment"
-        android:name="com.final_project.poop_bags.modules.posts.PostsFragment"
-        android:label="@string/posts"
-        tools:layout="@layout/fragment_posts" />
+        android:id="@+id/navigation_edit_station"
+        android:name="com.final_project.poop_bags.modules.editStation.EditStationFragment"
+        android:label="@string/title_edit_station"
+        tools:layout="@layout/fragment_edit_station">
+        
+        <argument
+            android:name="stationId"
+            app:argType="string" />
+    </fragment>
 </navigation>

@@ -1,48 +1,71 @@
 package com.final_project.poop_bags
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.textfield.TextInputEditText
+import com.final_project.poop_bags.databinding.FragmentSignInBinding
+import com.final_project.poop_bags.models.FirebaseModel
 
 class SignInFragment : Fragment() {
+
+    private var binding: FragmentSignInBinding? = null
+    private var firebaseModel: FirebaseModel = FirebaseModel.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_sign_in, container, false)
+    ): View {
+        binding = FragmentSignInBinding.inflate(inflater, container, false)
+        return binding?.root as View
+    }
 
-        val backButton = view.findViewById<ImageButton>(R.id.back_button)
-        val signInButton = view.findViewById<Button>(R.id.sign_in_button)
-        val emailInput = view.findViewById<TextInputEditText>(R.id.email_input)
-        val passwordInput = view.findViewById<TextInputEditText>(R.id.password_input)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        backButton.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        signInButton.setOnClickListener {
-            val email = emailInput.text.toString().trim()
-            val password = passwordInput.text.toString().trim()
-
-            if (email.isEmpty()) {
-                Toast.makeText(requireContext(), "Email cannot be empty", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        binding?.let {
+            it.backButton.setOnClickListener {
+                findNavController().navigateUp()
             }
 
-            if (password.isEmpty()) {
-                Toast.makeText(requireContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            it.signInButton.setOnClickListener { _ ->
+                val email = it.emailInput.text.toString().trim()
+                val password = it.passwordInput.text.toString().trim()
+
+                if (email.isEmpty()) {
+                    Toast.makeText(requireContext(), "Email cannot be empty", Toast.LENGTH_SHORT)
+                        .show()
+                    return@setOnClickListener
+                }
+
+                if (password.isEmpty()) {
+                    Toast.makeText(requireContext(), "Password cannot be empty", Toast.LENGTH_SHORT)
+                        .show()
+                    return@setOnClickListener
+                }
+
+                firebaseModel.signInUser(email, password) { success ->
+                    if (success) {
+                        Toast.makeText(requireContext(), "Sign in successful", Toast.LENGTH_SHORT)
+                            .show()
+                        requireActivity().finish()
+                        val intent = Intent(requireContext(), MainActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(requireContext(), "Sign in failed", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
             }
         }
+    }
 
-        return view
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 }

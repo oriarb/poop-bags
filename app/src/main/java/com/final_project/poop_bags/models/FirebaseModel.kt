@@ -3,6 +3,7 @@ package com.final_project.poop_bags.models
 import android.content.ContentValues.TAG
 import android.util.Log
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.firestoreSettings
@@ -30,6 +31,10 @@ class FirebaseModel @Inject constructor() {
 
     fun signOut() {
         auth.signOut()
+    }
+
+    fun getAuth(): FirebaseAuth {
+        return auth
     }
 
     fun registerUser(email: String, username: String, password: String, callback: (String, String?) -> Unit) {

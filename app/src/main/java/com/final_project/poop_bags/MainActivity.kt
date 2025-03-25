@@ -58,35 +58,37 @@ class MainActivity : AppCompatActivity() {
     private fun syncUserDataFromFirebase() {
         lifecycleScope.launch {
             try {
-                val currentUserId = firebaseModel.getAuth().currentUser?.uid
-                if (currentUserId != null) {
-                    try {
-                        userRepository.updateUserFromFirebase(currentUserId)
-                    } catch (e: Exception) {
-                        Log.e("MainActivity", "שגיאה בעדכון מידע משתמש מ-Firebase, משתמש במידע מקומי", e)
-                        Toast.makeText(
-                            this@MainActivity,
-                            "לא ניתן לעדכן מידע משתמש מהשרת, משתמש במידע מקומי",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    
-                    try {
-                        stationRepository.updateStationFavoriteStatus()
-                    } catch (e: Exception) {
-                        Log.e("MainActivity", "שגיאה בעדכון סטטוס מועדפים, משתמש במידע מקומי", e)
-                        Toast.makeText(
-                            this@MainActivity,
-                            "לא ניתן לעדכן את סטטוס המועדפים, משתמש במידע מקומי",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                val currentUserId = firebaseModel.getAuth().currentUser?.uid ?: run {
+                    Log.w("MainActivity", "No user logged in")
+                    return@launch
                 }
+                
+                val userUpdateResult = runCatching {
+                    userRepository.updateUserFromFirebase(currentUserId)
+                }
+                
+                if (userUpdateResult.isFailure) {
+                    Log.e("MainActivity", "Error updating user data from Firebase", userUpdateResult.exceptionOrNull())
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Using local user data - could not sync with server",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                
+                val favoritesUpdateResult = runCatching {
+                    stationRepository.updateStationFavoriteStatus()
+                }
+                
+                if (favoritesUpdateResult.isFailure) {
+                    Log.e("MainActivity", "Error updating favorites status", favoritesUpdateResult.exceptionOrNull())
+                }
+                
             } catch (e: Exception) {
-                Log.e("MainActivity", "שגיאה כללית בסנכרון נתונים", e)
+                Log.e("MainActivity", "General error syncing user data", e)
                 Toast.makeText(
                     this@MainActivity,
-                    "שגיאה בסנכרון נתוני המשתמש: ${e.message}",
+                    "Error syncing data: ${e.message ?: "Unknown error"}",
                     Toast.LENGTH_SHORT
                 ).show()
             }

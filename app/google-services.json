@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "383409959183",
-    "project_id": "poopbags-7b00b",
-    "storage_bucket": "poopbags-7b00b.firebasestorage.app"
+    "project_number": "136424479305",
+    "project_id": "poopbags-5d94a",
+    "storage_bucket": "poopbags-5d94a.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:383409959183:android:2180b311e8234c09ebce7a",
+        "mobilesdk_app_id": "1:136424479305:android:e71f5dc6cde02c3fa67d98",
         "android_client_info": {
           "package_name": "com.final_project.poop_bags"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDsjKZf0HjuJRFOmdNefZxbxeg5vyo6d6k"
+          "current_key": "AIzaSyDXZNnbzC4ERDHz4g0tMxbRC-3PS5Joqdc"
         }
       ],
       "services": {

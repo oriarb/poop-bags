@@ -60,6 +60,7 @@ class FirebaseModel private constructor() {
             "email" to email,
             "username" to username,
             "image" to "",
+            "favorites" to emptyList<String>()
         )
         database.collection("users").document(userId).set(user).addOnSuccessListener {
             Log.d(TAG, "addUser: success ${user}")

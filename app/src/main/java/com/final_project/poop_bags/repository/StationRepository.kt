@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import android.util.Log
+import kotlinx.coroutines.flow.first
 
 @Singleton
 class StationRepository @Inject constructor(
@@ -40,7 +42,7 @@ class StationRepository @Inject constructor(
 
     suspend fun addStation(name: String, imageUrl: String, latitude: Double, longitude: Double) {
         withContext(Dispatchers.IO) {
-            val currentUserId = getCurrentUserId()
+            val currentUserId = userRepository.getCurrentUserId()
             val newStation = Station(
                 id = generateStationId(),
                 name = name,
@@ -141,16 +143,39 @@ class StationRepository @Inject constructor(
         }
     }
 
-    suspend fun getCurrentUserId(): String {
-        return withContext(Dispatchers.IO) {
-            userRepository.getCurrentUserId()
-        }
-    }
-
     suspend fun getUserFavorites(): List<String> {
         return withContext(Dispatchers.IO) {
             val currentProfile = userRepository.getUserProfile()
             currentProfile.favorites
+        }
+    }
+
+    suspend fun updateStationFavoriteStatus() {
+        withContext(Dispatchers.IO) {
+            try {
+                val favorites = userRepository.getUserFavorites()
+                
+                val stationsList = try {
+                    stationDao.getAllStations().first()
+                } catch (e: Exception) {
+                    Log.e("StationRepository", "Failed to get stations, using empty list", e)
+                    emptyList()
+                }
+                
+                stationsList.forEach { station ->
+                    try {
+                        val isFavorite = favorites.contains(station.id)
+                        if (station.isFavorite != isFavorite) {
+                            stationDao.updateFavoriteStatus(station.id, isFavorite)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("StationRepository", "Failed to update station ${station.id}", e)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("StationRepository", "Failed to update station favorite status", e)
+                throw e
+            }
         }
     }
 } 

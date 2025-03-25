@@ -9,12 +9,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.navigation.fragment.NavHostFragment
 import com.final_project.poop_bags.models.FirebaseModel
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private var firebaseModel: FirebaseModel = FirebaseModel.getInstance()
+    
+    @Inject
+    lateinit var firebaseModel: FirebaseModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

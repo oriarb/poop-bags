@@ -30,4 +30,7 @@ interface StationDao {
     
     @Query("UPDATE stations SET isFavorite = :isFavorite WHERE id = :stationId")
     suspend fun updateFavoriteStatus(stationId: String, isFavorite: Boolean)
+
+    @Query("SELECT * FROM stations WHERE id IN (:stationIds)")
+    suspend fun getStationsByIds(stationIds: List<String>): List<Station>
 } 

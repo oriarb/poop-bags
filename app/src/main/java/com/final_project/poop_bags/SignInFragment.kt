@@ -7,14 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.final_project.poop_bags.databinding.FragmentSignInBinding
 import com.final_project.poop_bags.models.FirebaseModel
+import com.final_project.poop_bags.repository.UserRepository
+import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SignInFragment : Fragment() {
 
     private var binding: FragmentSignInBinding? = null
-    private var firebaseModel: FirebaseModel = FirebaseModel.getInstance()
+    @Inject
+    lateinit var firebaseModel: FirebaseModel
+    @Inject
+    lateinit var userRepository: UserRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,13 +57,17 @@ class SignInFragment : Fragment() {
                     return@setOnClickListener
                 }
 
-                firebaseModel.signInUser(email, password) { success ->
-                    if (success) {
-                        Toast.makeText(requireContext(), "Sign in successful", Toast.LENGTH_SHORT)
-                            .show()
-                        requireActivity().finish()
-                        val intent = Intent(requireContext(), MainActivity::class.java)
-                        startActivity(intent)
+                firebaseModel.signInUser(email, password) { success, userId ->
+                    if (success && userId != null) {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            userRepository.updateUserFromFirebase(userId)
+                            Toast.makeText(requireContext(), "Sign in successful", Toast.LENGTH_SHORT)
+                                .show()
+                            val intent = Intent(requireContext(), MainActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            requireActivity().finish()
+                        }
                     } else {
                         Toast.makeText(requireContext(), "Sign in failed", Toast.LENGTH_SHORT)
                             .show()

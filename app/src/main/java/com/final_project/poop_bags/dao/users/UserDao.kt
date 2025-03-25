@@ -14,6 +14,9 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUserProfile(user: User)
 
+    @Query("DELETE FROM users")
+    suspend fun deleteAll()
+
     @Query("UPDATE users SET username = :username, password = :password, image = :image WHERE id = :id")
     suspend fun updateUserProfile(id: String, username: String, password: String, image: String?)
 

@@ -12,8 +12,10 @@ import com.final_project.poop_bags.repository.UserRepository
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.navigation.fragment.NavHostFragment
+import com.final_project.poop_bags.repository.StationRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.util.Log
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -26,8 +28,12 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var userRepository: UserRepository
 
+    @Inject
+    lateinit var stationRepository: StationRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -54,9 +60,30 @@ class MainActivity : AppCompatActivity() {
             try {
                 val currentUserId = firebaseModel.getAuth().currentUser?.uid
                 if (currentUserId != null) {
-                    userRepository.updateUserFromFirebase(currentUserId)
+                    try {
+                        userRepository.updateUserFromFirebase(currentUserId)
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "שגיאה בעדכון מידע משתמש מ-Firebase, משתמש במידע מקומי", e)
+                        Toast.makeText(
+                            this@MainActivity,
+                            "לא ניתן לעדכן מידע משתמש מהשרת, משתמש במידע מקומי",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    
+                    try {
+                        stationRepository.updateStationFavoriteStatus()
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "שגיאה בעדכון סטטוס מועדפים, משתמש במידע מקומי", e)
+                        Toast.makeText(
+                            this@MainActivity,
+                            "לא ניתן לעדכן את סטטוס המועדפים, משתמש במידע מקומי",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             } catch (e: Exception) {
+                Log.e("MainActivity", "שגיאה כללית בסנכרון נתונים", e)
                 Toast.makeText(
                     this@MainActivity,
                     "שגיאה בסנכרון נתוני המשתמש: ${e.message}",
@@ -64,9 +91,5 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
-    }
-    
-    fun navigateToBottomNavDestination(destinationId: Int) {
-        binding.navView.selectedItemId = destinationId
     }
 }

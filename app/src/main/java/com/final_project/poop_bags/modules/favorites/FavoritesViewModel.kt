@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.final_project.poop_bags.models.Station
 import com.final_project.poop_bags.repository.StationRepository
+import com.final_project.poop_bags.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -17,7 +18,8 @@ import kotlinx.coroutines.flow.first
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val repository: StationRepository
+    private val repository: StationRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     
     private val _error = MutableLiveData<String>()
@@ -71,7 +73,7 @@ class FavoritesViewModel @Inject constructor(
                 if (index >= 0) {
                     val currentStation = updatedStations[index]
                     val isLiked = repository.isStationLiked(station.id).first()
-                    val userId = repository.getCurrentUserId()
+                    val userId = userRepository.getCurrentUserId()
                     
                     val updatedLikes = if (isLiked) {
                         currentStation.likes + userId

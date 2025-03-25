@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.final_project.poop_bags.models.Station
 import com.final_project.poop_bags.repository.StationRepository
+import com.final_project.poop_bags.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -15,7 +16,8 @@ import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 class StationsViewModel @Inject constructor(
-    private val stationRepository: StationRepository
+    private val stationRepository: StationRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     
     private val _error = MutableLiveData<String?>(null)
@@ -37,7 +39,7 @@ class StationsViewModel @Inject constructor(
             try {
                 _isLoading.value = true
                 
-                val actualUserId = userId ?: stationRepository.getCurrentUserId()
+                val actualUserId = userId ?: userRepository.getCurrentUserId()
                 
                 stationRepository.getUserStations(actualUserId)
                     .catch { e ->
@@ -83,7 +85,7 @@ class StationsViewModel @Inject constructor(
     fun toggleLike(station: Station) {
         viewModelScope.launch {
             try {
-                val currentUserId = stationRepository.getCurrentUserId()
+                val currentUserId = userRepository.getCurrentUserId()
                 val updatedStations = _userStations.value.map { currentStation ->
                     if (currentStation.id == station.id) {
                         val newLikes = if (currentStation.likes.contains(currentUserId)) {

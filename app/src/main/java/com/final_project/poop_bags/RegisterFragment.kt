@@ -7,14 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.final_project.poop_bags.databinding.FragmentRegisterBinding
 import com.final_project.poop_bags.models.FirebaseModel
+import com.final_project.poop_bags.repository.UserRepository
+import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class RegisterFragment : Fragment() {
 
     private var binding: FragmentRegisterBinding? = null
-    private var firebaseModel: FirebaseModel = FirebaseModel.getInstance()
+    @Inject
+    lateinit var firebaseModel: FirebaseModel
+    @Inject
+    lateinit var userRepository: UserRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,17 +61,20 @@ class RegisterFragment : Fragment() {
                     return@setOnClickListener
                 }
 
-                firebaseModel.registerUser(email, username, password) { message ->
-                    if (message == "Registration successful") {
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                        requireActivity().finish()
-                        val intent = Intent(requireContext(), MainActivity::class.java)
-                        startActivity(intent)
+                firebaseModel.registerUser(email, username, password) { message, userId ->
+                    if (userId != null) {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            userRepository.createNewUser(userId, username, email)
+                            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                            val intent = Intent(requireContext(), MainActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            requireActivity().finish()
+                        }
                     } else {
                         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                     }
                 }
-
             }
         }
     }

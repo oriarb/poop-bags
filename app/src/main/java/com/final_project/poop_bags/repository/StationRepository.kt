@@ -6,7 +6,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -17,9 +16,13 @@ class StationRepository @Inject constructor(
     private val userRepository: UserRepository
 ) {
     fun getFavoriteStations(): Flow<List<Station>> = flow {
-        val favorites = userRepository.getUserFavorites()
-        val allStations = stationDao.getAllStations().first()
-        emit(allStations.filter { it.id in favorites })
+        val favoriteIds = userRepository.getUserFavorites()
+        if (favoriteIds.isNotEmpty()) {
+            val favoriteStations = stationDao.getStationsByIds(favoriteIds)
+            emit(favoriteStations)
+        } else {
+            emit(emptyList())
+        }
     }.flowOn(Dispatchers.IO)
 
     suspend fun toggleFavorite(stationId: String) {
@@ -28,12 +31,10 @@ class StationRepository @Inject constructor(
             val favorites = currentProfile.favorites.toMutableList()
             
             if (stationId in favorites) {
-                favorites.remove(stationId)
+                userRepository.removeFromFavorites(stationId)
             } else {
-                favorites.add(stationId)
+                userRepository.addToFavorites(stationId)
             }
-            
-            userRepository.updateFavorites(favorites)
         }
     }
 

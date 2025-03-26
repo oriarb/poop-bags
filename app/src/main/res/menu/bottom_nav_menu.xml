@@ -7,9 +7,9 @@
         android:title="@string/title_add_station" />
 
     <item
-        android:id="@+id/navigation_explore"
-        android:icon="@drawable/ic_explore"
-        android:title="@string/title_explore" />
+        android:id="@+id/navigation_map"
+        android:icon="@drawable/ic_map"
+        android:title="@string/title_map" />
 
     <item
         android:id="@+id/navigation_profile"

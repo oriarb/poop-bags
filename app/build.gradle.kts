@@ -5,6 +5,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
     id("com.google.gms.google-services")
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {
@@ -47,6 +48,11 @@ android {
     kapt {
         correctErrorTypes = true
     }
+
+    secrets {
+        propertiesFileName = "secrets.properties"
+        defaultPropertiesFileName = "local.defaults.properties"
+    }
 }
 
 hilt {
@@ -63,8 +69,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
-//    implementation("com.google.firebase:firebase-auth")
-//    implementation("com.google.firebase:firebase-storage")
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.livedata.ktx.v270)
@@ -77,6 +81,8 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
     kapt(libs.hilt.android.compiler)
     kapt(libs.androidx.hilt.compiler)
 

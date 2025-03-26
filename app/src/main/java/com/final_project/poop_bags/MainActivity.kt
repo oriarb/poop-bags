@@ -84,8 +84,21 @@ class MainActivity : AppCompatActivity() {
                     Log.e("MainActivity", "Error updating favorites status", favoritesUpdateResult.exceptionOrNull())
                 }
                 
+                val stationsRefreshResult = runCatching {
+                    stationRepository.refreshStationsFromFirebase()
+                }
+                
+                if (stationsRefreshResult.isFailure) {
+                    Log.e("MainActivity", "Error refreshing stations from Firebase", stationsRefreshResult.exceptionOrNull())
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Using local stations data - could not sync with server",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                
             } catch (e: Exception) {
-                Log.e("MainActivity", "General error syncing user data", e)
+                Log.e("MainActivity", "General error syncing data", e)
                 Toast.makeText(
                     this@MainActivity,
                     "Error syncing data: ${e.message ?: "Unknown error"}",

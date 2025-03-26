@@ -21,6 +21,9 @@ interface StationDao {
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStation(station: Station)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertStations(stations: List<Station>)
     
     @Update
     suspend fun updateStation(station: Station)
@@ -36,4 +39,8 @@ interface StationDao {
 
     @Query("SELECT * FROM stations WHERE id IN (:stationIds)")
     suspend fun getStationsByIds(stationIds: List<String>): List<Station>
+
+    @Query("DELETE FROM stations")
+    suspend fun deleteAllStations()
+
 } 

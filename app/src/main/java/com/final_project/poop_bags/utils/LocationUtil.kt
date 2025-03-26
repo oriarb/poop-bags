@@ -9,8 +9,9 @@ import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class LocationUtil(private val context: Context) {
+class LocationUtil @Inject constructor(private val context: Context) {
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
     private val TAG = "com.final_project.poop_bags.utils.LocationUtil"

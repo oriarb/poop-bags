@@ -121,7 +121,7 @@ class AddStationViewModel @Inject constructor(
 
     private fun getCurrentLocation(): Pair<Double, Double> {
         // TODO: להשתמש בפונקציה הקיימת לקבלת המיקום
-        return Pair(32.0853, 34.7818)
+        return Pair(31.9700559, 34.7594685)
     }
 
     fun clearError() {

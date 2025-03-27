@@ -64,8 +64,12 @@ class AddStationViewModel @Inject constructor(
     }
 
     fun saveStation(stationName: String) {
-        if (!validateInput(stationName) || selectedImageUri == null) {
-            _error.value = "Please provide a name and image"
+        if (!validateInput(stationName)) {
+            return
+        }
+        
+        if (selectedImageUri == null) {
+            _error.value = "Please provide an image"
             return
         }
 

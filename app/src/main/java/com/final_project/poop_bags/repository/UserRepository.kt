@@ -13,8 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class UserRepository @Inject constructor(
     private val userDao: UserDao,
-    private val firebaseModel: FirebaseModel,
-    private val cloudinaryService: CloudinaryService
+    private val firebaseModel: FirebaseModel
 ) {
     suspend fun getUserProfile(): User {
         return withContext(Dispatchers.IO) {
@@ -22,21 +21,18 @@ class UserRepository @Inject constructor(
         }
     }
 
-    suspend fun updateProfilePicture(uri: Uri) {
+    suspend fun updateProfilePicture(cloudinaryUrl: String) {
         withContext(Dispatchers.IO) {
             try {
-                val cloudinaryUrl = cloudinaryService.uploadImage(uri)
-                
-                if (cloudinaryUrl.isEmpty()) {
-                    throw IllegalStateException("Failed to upload profile picture")
-                }
-                
-                val currentProfile = getUserProfile()
-                userDao.updateUserProfile(
-                    id = currentProfile.id,
-                    username = currentProfile.username,
-                    password = currentProfile.password,
-                    image = cloudinaryUrl
+                val currentProfileId = getCurrentUserId()
+                userDao.updateProfilePicture(
+                    imageUri = cloudinaryUrl,
+                    id = currentProfileId
+                )
+
+                firebaseModel.updateProfilePicture(
+                    currentProfileId,
+                    cloudinaryUrl
                 )
                 
             } catch (e: Exception) {
@@ -143,5 +139,9 @@ class UserRepository @Inject constructor(
             userDao.updateFavorites(currentProfile.id, updatedFavorites)
             firebaseModel.updateUserFavorites(currentProfile.id, updatedFavorites)
         }
+    }
+
+    suspend fun updateProfileImageUrl(imageUrl: String) {
+        // עדכון שדה ה-image ב-Firebase בישות User
     }
 }

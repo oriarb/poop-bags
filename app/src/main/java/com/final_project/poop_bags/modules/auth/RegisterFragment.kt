@@ -1,4 +1,4 @@
-package com.final_project.poop_bags
+package com.final_project.poop_bags.modules.auth
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.final_project.poop_bags.MainActivity
 import com.final_project.poop_bags.databinding.FragmentRegisterBinding
 import com.final_project.poop_bags.models.FirebaseModel
 import com.final_project.poop_bags.repository.UserRepository

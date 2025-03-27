@@ -4,6 +4,7 @@ import android.net.Uri
 import com.final_project.poop_bags.dao.users.UserDao
 import com.final_project.poop_bags.models.FirebaseModel
 import com.final_project.poop_bags.models.User
+import com.final_project.poop_bags.utils.CloudinaryService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -12,8 +13,8 @@ import javax.inject.Singleton
 @Singleton
 class UserRepository @Inject constructor(
     private val userDao: UserDao,
-    private val imageCache: ImageCache,
-    private val firebaseModel: FirebaseModel
+    private val firebaseModel: FirebaseModel,
+    private val cloudinaryService: CloudinaryService
 ) {
     suspend fun getUserProfile(): User {
         return withContext(Dispatchers.IO) {
@@ -24,14 +25,20 @@ class UserRepository @Inject constructor(
     suspend fun updateProfilePicture(uri: Uri) {
         withContext(Dispatchers.IO) {
             try {
-                val cachedImagePath = imageCache.cacheImage(uri)
+                val cloudinaryUrl = cloudinaryService.uploadImage(uri)
+                
+                if (cloudinaryUrl.isEmpty()) {
+                    throw IllegalStateException("Failed to upload profile picture")
+                }
+                
                 val currentProfile = getUserProfile()
                 userDao.updateUserProfile(
                     id = currentProfile.id,
                     username = currentProfile.username,
                     password = currentProfile.password,
-                    image = cachedImagePath
+                    image = cloudinaryUrl
                 )
+                
             } catch (e: Exception) {
                 throw IllegalStateException("Failed to update profile picture", e)
             }

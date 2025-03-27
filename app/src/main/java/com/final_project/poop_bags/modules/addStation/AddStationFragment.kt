@@ -76,7 +76,7 @@ class AddStationFragment : Fragment() {
                 binding.uploadButton.isEnabled = false
                 
                 val stationName = binding.stationNameInput.text.toString()
-                viewModel.uploadStation(stationName, binding.updateLocationCheckbox.isChecked)
+                viewModel.saveStation(stationName)
             } catch (e: Exception) {
                 binding.progressBar.visibility = View.GONE
                 binding.uploadButton.isEnabled = true

@@ -81,7 +81,7 @@ class AddStationViewModel @Inject constructor(
                     return@launch
                 }
 
-                val location = if (_isEditMode.value == true && !updateLocation) {
+                val location = if (_isEditMode.value == true) {
                     Location("").apply {
                         latitude = _currentStation.value?.latitude ?: 0.0
                         longitude = _currentStation.value?.longitude ?: 0.0

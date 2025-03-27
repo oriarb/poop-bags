@@ -17,13 +17,12 @@ class LocationUtil @Inject constructor(private val context: Context) {
     private val TAG = "com.final_project.poop_bags.utils.LocationUtil"
 
     @SuppressLint("MissingPermission")
-    fun getCurrentLocation(): Flow<Location?> = flow {
-        try {
-            val location = fusedLocationClient.lastLocation.await()
-            emit(location)
+    suspend fun getCurrentLocation(): Location? {
+        return try {
+            fusedLocationClient.lastLocation.await()
         } catch (e: Exception) {
             Log.e(TAG, "Error getting location", e)
-            emit(null)
+            null
         }
     }
 

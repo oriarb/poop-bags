@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.final_project.poop_bags.models.Station
 import com.final_project.poop_bags.repository.StationRepository
-import com.final_project.poop_bags.repository.ImageCache
+import com.final_project.poop_bags.utils.CloudinaryService
 import com.final_project.poop_bags.utils.LocationUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddStationViewModel @Inject constructor(
     private val stationRepository: StationRepository,
-    private val imageCache: ImageCache,
+    private val cloudinaryService: CloudinaryService,
     private val locationUtil: LocationUtil
 ) : ViewModel() {
 
@@ -63,23 +63,25 @@ class AddStationViewModel @Inject constructor(
         }
     }
 
-    fun uploadStation(stationName: String, updateLocation: Boolean) {
-        if (!validateInput(stationName)) return
+    fun saveStation(stationName: String) {
+        if (!validateInput(stationName) || selectedImageUri == null) {
+            _error.value = "Please provide a name and image"
+            return
+        }
+
+        _isLoading.value = true
 
         viewModelScope.launch {
             try {
-                _isLoading.value = true
+                val cloudinaryUrl = cloudinaryService.uploadImage(selectedImageUri!!)
                 
-                val imageUrl = selectedImageUri?.let { uri ->
-                    imageCache.cacheImage(uri)
-                } ?: _currentStation.value?.imageUrl
-
-                if (imageUrl == null && _currentStation.value?.imageUrl == null) {
-                    _error.value = "Please select an image"
+                if (cloudinaryUrl.isEmpty()) {
+                    _error.value = "Failed to upload image. Please try again."
+                    _isLoading.value = false
                     return@launch
                 }
 
-                val location = if (_isEditMode.value == true && !updateLocation) {
+                val location = if (_isEditMode.value == true) {
                     Location("").apply {
                         latitude = _currentStation.value?.latitude ?: 0.0
                         longitude = _currentStation.value?.longitude ?: 0.0
@@ -93,21 +95,21 @@ class AddStationViewModel @Inject constructor(
                         stationRepository.updateStation(
                             stationId = stationId,
                             name = stationName.trim(),
-                            imageUrl = imageUrl ?: _currentStation.value?.imageUrl!!,
+                            imageUrl = cloudinaryUrl,
                             latitude = location?.latitude ?: 0.0,
                             longitude = location?.longitude ?: 0.0
                         )
-                        _success.value = "the station edited successfully"
+                        _success.value = "Station edited successfully"
                         _uploadSuccess.value = true
                     }
                 } else {
                     stationRepository.addStation(
                         name = stationName.trim(),
-                        imageUrl = imageUrl!!,
+                        imageUrl = cloudinaryUrl,
                         latitude = location?.latitude ?: 0.0,
                         longitude = location?.longitude ?: 0.0
                     )
-                    _success.value = "station added successfully"
+                    _success.value = "Station added successfully"
                     _uploadSuccess.value = true
                 }
             } catch (e: Exception) {

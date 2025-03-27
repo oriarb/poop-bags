@@ -125,7 +125,7 @@ class StationsViewModel @Inject constructor(
                 _userStations.value = updatedStations
                 _stations.value = updatedStations.toList()
                 
-                _success.value = "the station added successfully to favorites"
+                _success.value = "the station favorites status changed successfully"
                 
                 android.util.Log.d("StationsViewModel", "Toggled favorite for station: ${station.id}")
             } catch (e: Exception) {

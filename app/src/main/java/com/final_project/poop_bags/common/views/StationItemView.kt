@@ -54,23 +54,12 @@ class StationItemView @JvmOverloads constructor(
                     commentsCount.text = commentsText
                 }
 
-                if (stationImage.tag != station.imageUrl) {
-                    try {
-                        if (station.imageUrl.isEmpty()) {
-                            stationImage.setImageResource(android.R.drawable.ic_menu_gallery)
-                        } else {
-                            Glide.with(context)
-                                .load(station.imageUrl)
-                                .centerCrop()
-                                .placeholder(android.R.drawable.ic_menu_gallery)
-                                .error(android.R.drawable.ic_menu_gallery)
-                                .fallback(android.R.drawable.ic_menu_gallery)
-                                .into(stationImage)
-                        }
-                        stationImage.tag = station.imageUrl
-                    } catch (e: Exception) {
-                        stationImage.setImageResource(android.R.drawable.ic_menu_gallery)
-                    }
+                if (station.imageUrl.isNotEmpty()) {
+                    Glide.with(context)
+                        .load(station.imageUrl)
+                        .placeholder(android.R.drawable.ic_menu_gallery)
+                        .error(android.R.drawable.ic_menu_gallery)
+                        .into(stationImage)
                 }
 
                 if (likeButton.isSelected != isLiked) {

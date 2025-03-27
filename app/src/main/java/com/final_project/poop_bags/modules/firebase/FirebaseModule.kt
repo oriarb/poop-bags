@@ -17,6 +17,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.memoryCacheSettings
+import com.final_project.poop_bags.utils.CloudinaryService
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -72,5 +73,11 @@ object FirebaseModule {
         interactionService: FirebaseInteractionService
     ): FirebaseModel {
         return FirebaseModel(authService, userService, stationService, interactionService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCloudinaryService(): CloudinaryService {
+        return CloudinaryService()
     }
 }

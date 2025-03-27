@@ -89,6 +89,9 @@ dependencies {
     // Glide
     implementation(libs.glide)
 
+    implementation ("com.cloudinary:cloudinary-android:2.3.1")
+
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit.v115)

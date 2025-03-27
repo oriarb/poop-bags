@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.final_project.poop_bags.models.Station
 import com.final_project.poop_bags.repository.StationRepository
-import com.final_project.poop_bags.repository.ImageCache
+import com.final_project.poop_bags.utils.CloudinaryService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditStationViewModel @Inject constructor(
     private val stationRepository: StationRepository,
-    private val imageCache: ImageCache
+    private val cloudinaryService: CloudinaryService
 ) : ViewModel() {
 
     private val _isLoading = MutableLiveData<Boolean>(false)
@@ -65,11 +65,12 @@ class EditStationViewModel @Inject constructor(
                 _isLoading.value = true
                 
                 val imageUrl = selectedImageUri?.let { uri ->
-                    imageCache.cacheImage(uri)
+                    cloudinaryService.uploadImage(uri)
                 } ?: _station.value?.imageUrl
 
-                if (imageUrl == null) {
-                    _error.value = "Please select an image"
+                if (imageUrl == null || imageUrl.isEmpty()) {
+                    _error.value = "Failed to upload image. Please try again."
+                    _isLoading.value = false
                     return@launch
                 }
 

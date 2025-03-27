@@ -35,6 +35,16 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun logout() {
+        viewModelScope.launch {
+            try {
+                userRepository.logout()
+            } catch (e: Exception) {
+                _error.value = "Failed to logout: ${e.message}"
+            }
+        }
+    }
+
     fun onErrorShown() {
         _error.value = null
     }

@@ -144,4 +144,11 @@ class UserRepository @Inject constructor(
             firebaseModel.updateUserFavorites(currentProfile.id, updatedFavorites)
         }
     }
+
+    suspend fun logout() {
+        withContext(Dispatchers.IO) {
+            firebaseModel.signOut()
+            userDao.deleteAll()
+        }
+    }
 }

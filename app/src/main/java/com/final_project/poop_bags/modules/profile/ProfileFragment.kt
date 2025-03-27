@@ -14,8 +14,7 @@ import com.final_project.poop_bags.R
 import com.final_project.poop_bags.databinding.FragmentProfileBinding
 import com.bumptech.glide.Glide
 import android.widget.Toast
-import com.final_project.poop_bags.WelcomeActivity
-import com.final_project.poop_bags.models.FirebaseModel
+import com.final_project.poop_bags.modules.welcome.WelcomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

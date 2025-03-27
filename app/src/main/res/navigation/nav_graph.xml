@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@+id/navigation_explore">
+    app:startDestination="@+id/navigation_map">
 
     <fragment
-        android:id="@+id/navigation_explore"
-        android:name="com.final_project.poop_bags.modules.explore.ExploreFragment"
-        android:label="@string/title_explore"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_map"
+        android:name="com.final_project.poop_bags.modules.map.MapFragment"
+        android:label="@string/title_map"
+        tools:layout="@layout/fragment_map" />
 
     <fragment
         android:id="@+id/navigation_stations"

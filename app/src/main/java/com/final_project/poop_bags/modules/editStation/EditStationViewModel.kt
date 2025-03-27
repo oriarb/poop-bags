@@ -1,5 +1,6 @@
 package com.final_project.poop_bags.modules.editStation
 
+import android.location.Location
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,13 +9,16 @@ import androidx.lifecycle.viewModelScope
 import com.final_project.poop_bags.models.Station
 import com.final_project.poop_bags.repository.StationRepository
 import com.final_project.poop_bags.utils.CloudinaryService
+import com.final_project.poop_bags.utils.LocationUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class EditStationViewModel @Inject constructor(
     private val stationRepository: StationRepository,
+    private val locationUtil: LocationUtil,
     private val cloudinaryService: CloudinaryService
 ) : ViewModel() {
 
@@ -74,10 +78,13 @@ class EditStationViewModel @Inject constructor(
                     return@launch
                 }
 
-                val (latitude, longitude) = if (updateLocation) {
-                    getCurrentLocation()
+                val location = if (updateLocation) {
+                    locationUtil.getCurrentLocation().firstOrNull()
                 } else {
-                    Pair(_station.value?.latitude ?: 0.0, _station.value?.longitude ?: 0.0)
+                    Location("").apply {
+                        latitude = _station.value?.latitude ?: 0.0
+                        longitude = _station.value?.longitude ?: 0.0
+                    }
                 }
 
                 _station.value?.id?.let { stationId ->
@@ -85,8 +92,8 @@ class EditStationViewModel @Inject constructor(
                         stationId = stationId,
                         name = stationName.trim(),
                         imageUrl = imageUrl,
-                        latitude = latitude,
-                        longitude = longitude
+                        latitude = location?.latitude ?: 0.0,
+                        longitude = location?.longitude ?: 0.0
                     )
                     _success.value = "Station updated successfully"
                     _saveSuccess.value = true
@@ -107,11 +114,6 @@ class EditStationViewModel @Inject constructor(
             return false
         }
         return true
-    }
-
-    private fun getCurrentLocation(): Pair<Double, Double> {
-        // TODO: להשתמש בפונקציה הקיימת לקבלת המיקום
-        return Pair(32.0853, 34.7818)
     }
 
     fun clearError() {

@@ -20,8 +20,8 @@ interface UserDao {
     @Query("UPDATE users SET username = :username, password = :password, image = :image WHERE id = :id")
     suspend fun updateUserProfile(id: String, username: String, password: String, image: String?)
 
-    @Query("UPDATE users SET image = :imageUri")
-    suspend fun updateProfilePicture(imageUri: String?)
+    @Query("UPDATE users SET image = :imageUri WHERE id = :id")
+    suspend fun updateProfilePicture(imageUri: String, id: String)
     
     @Query("UPDATE users SET favorites = :favorites WHERE id = :userId")
     suspend fun updateFavorites(userId: String, favorites: List<String>)

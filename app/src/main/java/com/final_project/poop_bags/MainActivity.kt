@@ -16,6 +16,7 @@ import com.final_project.poop_bags.repository.StationRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import android.util.Log
+import com.final_project.poop_bags.modules.welcome.WelcomeActivity
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

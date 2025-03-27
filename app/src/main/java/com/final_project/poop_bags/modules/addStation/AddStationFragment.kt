@@ -72,9 +72,6 @@ class AddStationFragment : Fragment() {
 
         binding.uploadButton.setOnClickListener {
             try {
-                binding.progressBar.visibility = View.VISIBLE
-                binding.uploadButton.isEnabled = false
-                
                 val stationName = binding.stationNameInput.text.toString()
                 viewModel.saveStation(stationName)
             } catch (e: Exception) {

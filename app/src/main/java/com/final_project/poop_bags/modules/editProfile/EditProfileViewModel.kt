@@ -7,14 +7,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.final_project.poop_bags.models.User
 import com.final_project.poop_bags.repository.UserRepository
+import com.final_project.poop_bags.utils.CloudinaryService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed class ImageUploadStatus {
+    data object Loading : ImageUploadStatus()
+    data object Success : ImageUploadStatus()
+    data class Error(val message: String) : ImageUploadStatus()
+}
+
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository
-) : ViewModel() {
+    private val userRepository: UserRepository,
+    private val cloudinaryService: CloudinaryService
+    ) : ViewModel() {
 
     private val _user = MutableLiveData<User>()
     val user: LiveData<User> = _user
@@ -27,6 +35,9 @@ class EditProfileViewModel @Inject constructor(
 
     private val _saveSuccess = MutableLiveData<Boolean>()
     val saveSuccess: LiveData<Boolean> = _saveSuccess
+
+    private val _imageUploadStatus = MutableLiveData<ImageUploadStatus>()
+    val imageUploadStatus: LiveData<ImageUploadStatus> = _imageUploadStatus
 
     init {
         loadUserProfile()
@@ -64,11 +75,28 @@ class EditProfileViewModel @Inject constructor(
 
     fun updateProfilePicture(uri: Uri) {
         viewModelScope.launch {
+            _imageUploadStatus.value = ImageUploadStatus.Loading
             _isLoading.value = true
+            
             try {
-                userRepository.updateProfilePicture(uri)
+                val cloudinaryUrl = cloudinaryService.uploadImage(uri)
+                
+                if (cloudinaryUrl.isEmpty()) {
+                    _imageUploadStatus.value = ImageUploadStatus.Error("Failed to upload image. Please try again.")
+                    _error.value = "Failed to upload image. Please try again."
+                    _isLoading.value = false
+                    return@launch
+                }
+                
+                userRepository.updateProfilePicture(cloudinaryUrl)
+                
+                _imageUploadStatus.value = ImageUploadStatus.Success
+                
                 loadUserProfile()
             } catch (e: Exception) {
+                _imageUploadStatus.value = ImageUploadStatus.Error(
+                    e.message ?: "Failed to update profile picture"
+                )
                 _error.value = e.message ?: "Failed to update profile picture"
             } finally {
                 _isLoading.value = false

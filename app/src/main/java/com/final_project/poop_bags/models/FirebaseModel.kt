@@ -27,6 +27,7 @@ class FirebaseModel @Inject constructor(
         userService.updateUserProfile(userId, username, email)
     fun updateUserFavorites(userId: String, favorites: List<String>) = 
         userService.updateUserFavorites(userId, favorites)
+    suspend fun updateProfilePicture(userId: String, imageUrl: String) = userService.updateUserProfileImage(userId, imageUrl)
     
     suspend fun addStation(name: String, image: String, latitude: Double, longitude: Double) = 
         stationService.addStation(name, image, latitude, longitude)

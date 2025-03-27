@@ -150,12 +150,21 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun handleSelectedImage(uri: Uri) {
-        viewModel.updateProfilePicture(uri)
-        Glide.with(this)
-            .load(uri)
-            .circleCrop()
-            .placeholder(R.drawable.default_profile)
-            .into(binding.profileImage)
+        try {
+            Glide.with(this)
+                .load(uri)
+                .circleCrop()
+                .placeholder(R.drawable.default_profile)
+                .into(binding.profileImage)
+            
+            viewModel.updateProfilePicture(uri)
+        } catch (e: Exception) {
+            Toast.makeText(
+                requireContext(),
+                "Error handling selected image: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     private fun observeViewModel() {
@@ -165,13 +174,15 @@ class EditProfileFragment : Fragment() {
                     binding.usernameInput.setText(profile.username)
                     binding.emailInput.setText(profile.email)
                     
-                    profile.image?.let { imagePath ->
-                        Glide.with(this)
-                            .load(imagePath)
-                            .circleCrop()
-                            .placeholder(R.drawable.default_profile)
-                            .error(R.drawable.default_profile)
-                            .into(binding.profileImage)
+                    profile.image?.let { imageUrl ->
+                        if (imageUrl.isNotEmpty()) {
+                            Glide.with(this)
+                                .load(imageUrl)
+                                .circleCrop()
+                                .placeholder(R.drawable.default_profile)
+                                .error(R.drawable.default_profile)
+                                .into(binding.profileImage)
+                        }
                     } ?: run {
                         Glide.with(this)
                             .load(R.drawable.default_profile)
@@ -179,7 +190,35 @@ class EditProfileFragment : Fragment() {
                             .into(binding.profileImage)
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Error loading profile data: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Error loading profile data: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            
+            viewModel.imageUploadStatus.observe(viewLifecycleOwner) { status ->
+                when (status) {
+                    is ImageUploadStatus.Loading -> {
+                        binding.progressBar.isVisible = true
+                    }
+                    is ImageUploadStatus.Success -> {
+                        binding.progressBar.isVisible = false
+                        Toast.makeText(
+                            requireContext(),
+                            "Profile picture updated successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    is ImageUploadStatus.Error -> {
+                        binding.progressBar.isVisible = false
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to update profile picture: ${status.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
 
@@ -205,7 +244,11 @@ class EditProfileFragment : Fragment() {
                 }
             }
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Error in view model observation: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Error in view model observation: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

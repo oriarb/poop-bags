@@ -12,9 +12,6 @@ import kotlinx.coroutines.flow.Flow
 interface StationDao {
     @Query("SELECT * FROM stations")
     fun getAllStations(): Flow<List<Station>>
-
-    @Query("SELECT * FROM stations")
-    suspend fun getAllStationsAsList(): List<Station>
     
     @Query("SELECT * FROM stations WHERE id = :stationId")
     suspend fun getStationById(stationId: String): Station?

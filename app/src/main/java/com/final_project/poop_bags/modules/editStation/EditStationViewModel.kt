@@ -72,14 +72,14 @@ class EditStationViewModel @Inject constructor(
                     cloudinaryService.uploadImage(uri)
                 } ?: _station.value?.imageUrl
 
-                if (imageUrl == null || imageUrl.isEmpty()) {
+                if (imageUrl.isNullOrEmpty()) {
                     _error.value = "Failed to upload image. Please try again."
                     _isLoading.value = false
                     return@launch
                 }
 
                 val location = if (updateLocation) {
-                    locationUtil.getCurrentLocation().firstOrNull()
+                    locationUtil.getCurrentLocation()
                 } else {
                     Location("").apply {
                         latitude = _station.value?.latitude ?: 0.0

@@ -39,8 +39,10 @@ class StationRepository @Inject constructor(
             val favorites = currentProfile.favorites.toMutableList()
             
             if (stationId in favorites) {
+                stationDao.updateFavoriteStatus(stationId, false)
                 userRepository.removeFromFavorites(stationId)
             } else {
+                stationDao.updateFavoriteStatus(stationId, true)
                 userRepository.addToFavorites(stationId)
             }
         }

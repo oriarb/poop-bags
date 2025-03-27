@@ -71,6 +71,9 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(R.id.action_profileFragment_to_editProfileFragment)
         }
 
+        binding.btnLogout.setOnClickListener {
+        }
+
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
         }

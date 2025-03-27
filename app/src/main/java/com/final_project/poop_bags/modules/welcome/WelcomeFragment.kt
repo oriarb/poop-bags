@@ -1,4 +1,4 @@
-package com.final_project.poop_bags
+package com.final_project.poop_bags.modules.welcome
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.final_project.poop_bags.R
 import com.final_project.poop_bags.databinding.FragmentWelcomeBinding
 
 class WelcomeFragment : Fragment() {

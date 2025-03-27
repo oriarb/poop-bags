@@ -23,8 +23,4 @@ object BitmapUtil {
         drawable.draw(canvas)
         return bitmap
     }
-
-    fun calculateSizeByZoom(zoomLevel: Float): Int {
-        return (70 * (zoomLevel / 20)).toInt()
-    }
 }

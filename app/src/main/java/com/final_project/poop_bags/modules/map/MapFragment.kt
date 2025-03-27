@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.final_project.poop_bags.R
 import com.final_project.poop_bags.models.Station
+import com.final_project.poop_bags.modules.stationPopup.StationPopupFragment
 import com.final_project.poop_bags.utils.BitmapUtil
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -34,6 +36,7 @@ class MapFragment: Fragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private val viewModel: MapViewModel by viewModels()
     private var selectedStationCircle: Circle? = null
+    private val stationMarkers = mutableListOf<Pair<Marker, Station>>()
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -94,6 +97,14 @@ class MapFragment: Fragment(), OnMapReadyCallback {
             viewModel.clearSelectedStation()
             selectedStationCircle?.remove()
         }
+
+        map.setOnCameraIdleListener {
+            val zoomLevel = map.cameraPosition.zoom
+
+            stationMarkers.forEach { (marker, _) ->
+                marker.isVisible = zoomLevel >= 15
+            }
+        }
     }
 
     private fun enableMapLocation() {
@@ -128,22 +139,20 @@ class MapFragment: Fragment(), OnMapReadyCallback {
         val marker = map.addMarker(MarkerOptions()
             .position(latLng)
             .title(station.name)
-            .icon(poopIcon))
-        marker?.tag = station
+            .icon(poopIcon)
+            .visible(false))
 
-        map.setOnCameraIdleListener {
-            val zoomLevel = map.cameraPosition.zoom
-            val newSize = BitmapUtil.calculateSizeByZoom(zoomLevel)
-            val newIcon = BitmapUtil.resizeBitmap(requireContext(), R.drawable.ic_poop_fill, newSize, newSize)
-            marker?.setIcon(newIcon)
+        marker?.let {
+            it.tag = station
+            stationMarkers.add(Pair(it, station))
         }
     }
 
     private fun selectStation(station: Station) {
         addStationCircle(station.latitude, station.longitude)
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(station.latitude, station.longitude), 18f), 1500, null)
-//        val fragment = StationDetails.newInstance(station)
-//        fragment.show(parentFragmentManager, "StationDetails")
+        val fragment = StationPopupFragment.newInstance(station)
+        fragment.show(parentFragmentManager, "StationPopupFragment")
     }
 
     private fun addStationCircle(latitude: Double, longitude: Double) {

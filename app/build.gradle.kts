@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.appcompat.v161)
     implementation(libs.material.v1110)
     implementation(libs.androidx.constraintlayout.v214)
+    implementation(libs.picasso)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)

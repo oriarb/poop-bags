@@ -25,7 +25,6 @@ class PoopBagsApplication : Application() {
             }
             
             MediaManager.init(this, config)
-            Log.d("PoopBagsApplication", "Cloudinary initialized successfully")
         } catch (e: Exception) {
             Log.e("PoopBagsApplication", "Error initializing Cloudinary", e)
         }

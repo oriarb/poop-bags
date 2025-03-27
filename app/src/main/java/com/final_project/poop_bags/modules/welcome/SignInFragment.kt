@@ -58,9 +58,15 @@ class SignInFragment : Fragment() {
                     return@setOnClickListener
                 }
 
+                it.progressBar.visibility = View.VISIBLE
+                it.signInButton.isEnabled = false
+
                 firebaseModel.signInUser(email, password) { success, userId ->
-                    if (success && userId != null) {
-                        viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        it.progressBar.visibility = View.GONE
+                        it.signInButton.isEnabled = true
+
+                        if (success && userId != null) {
                             userRepository.updateUserFromFirebase(userId)
                             Toast.makeText(requireContext(), "Sign in successful", Toast.LENGTH_SHORT)
                                 .show()
@@ -68,10 +74,10 @@ class SignInFragment : Fragment() {
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                             requireActivity().finish()
+                        } else {
+                            Toast.makeText(requireContext(), "Sign in failed", Toast.LENGTH_SHORT)
+                                .show()
                         }
-                    } else {
-                        Toast.makeText(requireContext(), "Sign in failed", Toast.LENGTH_SHORT)
-                            .show()
                     }
                 }
             }

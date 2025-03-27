@@ -62,7 +62,13 @@ class RegisterFragment : Fragment() {
                     return@setOnClickListener
                 }
 
+                it.progressBar.visibility = View.VISIBLE
+                it.registerButton.isEnabled = false
+
                 firebaseModel.registerUser(email, username, password) { message, userId ->
+                    it.progressBar.visibility = View.GONE
+                    it.registerButton.isEnabled = true
+
                     if (userId != null) {
                         viewLifecycleOwner.lifecycleScope.launch {
                             userRepository.createNewUser(userId, username, email)

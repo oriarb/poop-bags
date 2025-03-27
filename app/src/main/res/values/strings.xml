@@ -38,6 +38,7 @@
     <string name="add_post">Add Post</string>
     <string name="ui_setup_error">UI setup error: %1$s</string>
     <string name="navigation_error">Navigation error: %1$s</string>
+    <string name="log_out">User logged out successfully</string>
     <string name="station_image">station image</string>
     <string name="coordinates">coordinates</string>
     <string name="add_station">Add Station</string>

@@ -110,6 +110,7 @@
             android:layout_height="24dp"
             android:src="@drawable/ic_star_filled"
             android:layout_gravity="end|top"
-            android:layout_margin="8dp"/>
+            android:layout_margin="8dp"
+            app:tint="@color/yellow"/>
     </FrameLayout>
 </androidx.cardview.widget.CardView>

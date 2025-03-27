@@ -91,7 +91,7 @@ class AddStationViewModel @Inject constructor(
                         longitude = _currentStation.value?.longitude ?: 0.0
                     }
                 } else {
-                    locationUtil.getCurrentLocation().firstOrNull()
+                    locationUtil.getCurrentLocation()
                 }
 
                 if (_isEditMode.value == true) {

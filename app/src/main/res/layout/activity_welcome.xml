@@ -5,7 +5,7 @@
     android:id="@+id/welcome_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WelcomeActivity">
+    tools:context=".modules.welcome.WelcomeActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_auth"

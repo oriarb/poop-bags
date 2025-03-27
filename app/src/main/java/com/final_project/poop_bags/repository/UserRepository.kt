@@ -140,8 +140,4 @@ class UserRepository @Inject constructor(
             firebaseModel.updateUserFavorites(currentProfile.id, updatedFavorites)
         }
     }
-
-    suspend fun updateProfileImageUrl(imageUrl: String) {
-        // עדכון שדה ה-image ב-Firebase בישות User
-    }
 }

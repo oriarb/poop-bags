@@ -6,7 +6,7 @@
     app:startDestination="@id/welcomeFragment">
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="com.final_project.poop_bags.modules.auth.WelcomeFragment"
+        android:name="com.final_project.poop_bags.modules.welcome.WelcomeFragment"
         android:label="fragment_welcome"
         tools:layout="@layout/fragment_welcome" >
         <action
@@ -26,12 +26,12 @@
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.final_project.poop_bags.modules.auth.RegisterFragment"
+        android:name="com.final_project.poop_bags.modules.welcome.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" />
     <fragment
         android:id="@+id/signInFragment"
-        android:name="com.final_project.poop_bags.modules.auth.SignInFragment"
+        android:name="com.final_project.poop_bags.modules.welcome.SignInFragment"
         android:label="fragment_sign_in"
         tools:layout="@layout/fragment_sign_in" />
 </navigation>

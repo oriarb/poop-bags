@@ -1,4 +1,4 @@
-package com.final_project.poop_bags.modules.auth
+package com.final_project.poop_bags.modules.welcome
 
 import android.os.Bundle
 import android.view.LayoutInflater

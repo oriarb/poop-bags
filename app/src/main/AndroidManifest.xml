@@ -45,7 +45,7 @@
             android:value="${MAPS_API_KEY}" />
 
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".modules.welcome.WelcomeActivity"
             android:exported="false"/>
         <activity
             android:name=".MainActivity"

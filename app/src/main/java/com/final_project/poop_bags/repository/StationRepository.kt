@@ -17,6 +17,9 @@ class StationRepository @Inject constructor(
     private val stationDao: StationDao,
     private val userRepository: UserRepository
 ) {
+
+    val allStations: Flow<List<Station>> = stationDao.getAllStations()
+
     fun getFavoriteStations(): Flow<List<Station>> = flow {
         val favoriteIds = userRepository.getUserFavorites()
         if (favoriteIds.isNotEmpty()) {

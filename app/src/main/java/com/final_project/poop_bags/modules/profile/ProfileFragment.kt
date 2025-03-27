@@ -1,5 +1,6 @@
 package com.final_project.poop_bags.modules.profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,8 @@ import com.final_project.poop_bags.R
 import com.final_project.poop_bags.databinding.FragmentProfileBinding
 import com.bumptech.glide.Glide
 import android.widget.Toast
+import com.final_project.poop_bags.WelcomeActivity
+import com.final_project.poop_bags.models.FirebaseModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -72,6 +75,15 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnLogout.setOnClickListener {
+            viewModel.logout()
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.log_out),
+                Toast.LENGTH_SHORT
+            ).show()
+            val intent = Intent(requireContext(), WelcomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         }
 
         binding.btnBack.setOnClickListener {

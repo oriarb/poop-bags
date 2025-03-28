@@ -39,5 +39,4 @@ interface StationDao {
 
     @Query("DELETE FROM stations")
     suspend fun deleteAllStations()
-
-} 
+}

@@ -148,24 +148,24 @@ class StationRepository @Inject constructor(
         emit(station?.likes?.contains(userId) == true)
     }.flowOn(Dispatchers.IO)
 
-//    suspend fun addComment(stationId: String, text: String) {
-//        withContext(Dispatchers.IO) {
-//            val userId = userRepository.getCurrentUserId()
-//            val station = stationDao.getStationById(stationId)
-//
-//            station?.let {
-//                val newComment = Comment(
-//                    id = "comment_${System.currentTimeMillis()}",
-//                    userId = userId,
-//                    text = text
-//                )
-//
-//                val updatedComments = it.comments + newComment
-//                val updatedStation = it.copy(comments = updatedComments)
-//                stationDao.updateStation(updatedStation)
-//            }
-//        }
-//    }
+    suspend fun addComment(stationId: String, text: String) {
+        withContext(Dispatchers.IO) {
+            val userId = userRepository.getCurrentUserId()
+            val station = stationDao.getStationById(stationId)
+
+            station?.let {
+                val newComment = Comment(
+                    id = "comment_${System.currentTimeMillis()}",
+                    userId = userId,
+                    text = text
+                )
+
+                val updatedComments = it.comments + newComment
+                val updatedStation = it.copy(comments = updatedComments)
+                stationDao.updateStation(updatedStation)
+            }
+        }
+    }
 
     suspend fun getStationById(stationId: String): Station? {
         return withContext(Dispatchers.IO) {

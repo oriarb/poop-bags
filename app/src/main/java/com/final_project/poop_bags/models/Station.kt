@@ -23,10 +23,3 @@ data class Station(
     var isFavorite: Boolean = false
 ): Parcelable
 
-@Parcelize
-data class Comment(
-    val id: String,
-    val userId: String,
-    val text: String,
-    val timestamp: Long = System.currentTimeMillis()
-) : Parcelable

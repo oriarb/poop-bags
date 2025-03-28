@@ -9,7 +9,7 @@
         android:id="@+id/navigation_map"
         android:name="com.final_project.poop_bags.modules.map.MapFragment"
         android:label="@string/title_map"
-        tools:layout="@layout/fragment_map" >
+        tools:layout="@layout/fragment_map">
         <action
             android:id="@+id/action_navigation_map_to_stationDetailsFragment"
             app:destination="@id/stationDetailsFragment" />
@@ -21,10 +21,10 @@
         android:label="@string/title_stations">
         <argument
             android:name="userId"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
-        
+            app:nullable="true" />
+
         <action
             android:id="@+id/action_stations_to_add_station"
             app:destination="@id/navigation_add_station" />
@@ -35,7 +35,7 @@
         android:name="com.final_project.poop_bags.modules.addStation.AddStationFragment"
         android:label="@string/title_add_station"
         tools:layout="@layout/fragment_add_station">
-        
+
         <argument
             android:name="stationId"
             android:defaultValue="@null"
@@ -48,7 +48,7 @@
         android:name="com.final_project.poop_bags.modules.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile">
-        
+
         <action
             android:id="@+id/action_profileFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment"
@@ -84,7 +84,7 @@
         android:name="com.final_project.poop_bags.modules.editStation.EditStationFragment"
         android:label="@string/title_edit_station"
         tools:layout="@layout/fragment_edit_station">
-        
+
         <argument
             android:name="stationId"
             app:argType="string" />
@@ -92,5 +92,9 @@
     <fragment
         android:id="@+id/stationDetailsFragment"
         android:name="com.final_project.poop_bags.modules.stationDetails.StationDetailsFragment"
-        android:label="StationDetailsFragment" />
+        android:label="Station Details">
+        <argument
+            android:name="stationId"
+            app:argType="string" />
+    </fragment>
 </navigation>

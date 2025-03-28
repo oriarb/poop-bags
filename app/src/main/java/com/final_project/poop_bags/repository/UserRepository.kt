@@ -1,10 +1,8 @@
 package com.final_project.poop_bags.repository
 
-import android.net.Uri
 import com.final_project.poop_bags.dao.users.UserDao
 import com.final_project.poop_bags.models.FirebaseModel
 import com.final_project.poop_bags.models.User
-import com.final_project.poop_bags.utils.CloudinaryService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -18,6 +16,30 @@ class UserRepository @Inject constructor(
     suspend fun getUserProfile(): User {
         return withContext(Dispatchers.IO) {
             userDao.getUserProfile() ?: createDefaultProfile()
+        }
+    }
+
+    suspend fun getUserById(userId: String): User? {
+        return withContext(Dispatchers.IO) {
+            var user: User? = null
+            try {
+                val userData = firebaseModel.getUserData(userId)
+                if (userData != null) {
+                    user = User(
+                        id = userId,
+                        username = userData["username"] as? String ?: "",
+                        email = userData["email"] as? String ?: "",
+                        password = "", // You might not store the password in Firebase
+                        image = userData["image"] as? String ?: "",
+                        favorites = (userData["favorites"] as? List<String>) ?: emptyList()
+                    )
+                    userDao.insertUserProfile(user)
+                }
+            } catch (e: Exception) {
+                throw IllegalStateException("Failed to fetch user from Firebase", e)
+            }
+
+            user
         }
     }
 

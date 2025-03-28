@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.final_project.poop_bags.R
 import com.final_project.poop_bags.models.Station
 import com.final_project.poop_bags.utils.LocationUtil
@@ -56,6 +58,18 @@ class StationPopupFragment: BottomSheetDialogFragment() {
                             if (distance != null) "%,.0fm away".format(distance) else "Distance unavailable"
                     }
             }
+        }
+
+        val viewDetailsButton = view.findViewById<Button>(R.id.view_details)
+
+        viewDetailsButton.setOnClickListener {
+            station?.let {
+                val bundle = Bundle().apply {
+                    putString("stationId", it.id)
+                }
+                findNavController().navigate(R.id.action_navigation_map_to_stationDetailsFragment, bundle)
+            }
+            dismiss()
         }
     }
 

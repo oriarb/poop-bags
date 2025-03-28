@@ -9,7 +9,11 @@
         android:id="@+id/navigation_map"
         android:name="com.final_project.poop_bags.modules.map.MapFragment"
         android:label="@string/title_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_navigation_map_to_stationDetailsFragment"
+            app:destination="@id/stationDetailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_stations"
@@ -85,4 +89,8 @@
             android:name="stationId"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/stationDetailsFragment"
+        android:name="com.final_project.poop_bags.modules.stationDetails.StationDetailsFragment"
+        android:label="StationDetailsFragment" />
 </navigation>

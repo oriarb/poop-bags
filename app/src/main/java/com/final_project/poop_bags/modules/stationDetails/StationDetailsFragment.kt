@@ -1,17 +1,22 @@
 package com.final_project.poop_bags.modules.stationDetails
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.final_project.poop_bags.R
 import com.final_project.poop_bags.databinding.FragmentStationDetailsBinding
 import com.final_project.poop_bags.models.Comment
 import com.final_project.poop_bags.models.Station
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,7 +47,6 @@ class StationDetailsFragment : Fragment() {
         if (stationId != null) {
             viewModel.fetchStation(stationId)
         } else {
-            // Handle the case where stationId is null
             Toast.makeText(requireContext(), "Station ID is missing", Toast.LENGTH_SHORT).show()
             findNavController().navigateUp()
         }
@@ -77,27 +81,42 @@ class StationDetailsFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateUI(station: Station) {
         binding.stationName.text = station.name
-        // ... update other UI elements with station data ...
+        binding.likesCount.text = "${station.likes.size} Likes"
 
-        // Display comments
-        displayComments(station.comments ?: emptyList())
+        Picasso.get()
+            .load(station.imageUrl)
+            .placeholder(R.drawable.ic_missing_image)
+            .error(R.drawable.ic_missing_image)
+            .into(binding.stationImage)
+
+        displayComments(station.comments)
     }
 
     private fun displayComments(comments: List<Comment>) {
-        // Clear any previous comments
         binding.commentsContainer.removeAllViews()
 
         for (comment in comments) {
-            // Create a TextView for the comment text
-            val commentTextView = TextView(requireContext()).apply {
-                text = comment.text
-                // ... set other properties (e.g., padding, text size)
+            val commentLayout = LinearLayout(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 0, 0, 8) // Add some bottom margin between comments
+                }
+                orientation = LinearLayout.VERTICAL
+                setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.comment_background))
+                setPadding(16, 16, 16, 16) // Add padding inside the comment
             }
 
-            // Add the comment to the container
-            binding.commentsContainer.addView(commentTextView)
+            val commentTextView = TextView(requireContext()).apply {
+                text = comment.text
+            }
+
+            commentLayout.addView(commentTextView)
+            binding.commentsContainer.addView(commentLayout)
         }
     }
 

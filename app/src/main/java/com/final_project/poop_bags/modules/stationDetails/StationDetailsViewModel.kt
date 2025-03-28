@@ -9,6 +9,8 @@ import com.final_project.poop_bags.models.User
 import com.final_project.poop_bags.repository.StationRepository
 import com.final_project.poop_bags.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,6 +54,13 @@ class StationDetailsViewModel @Inject constructor(
             }
         }
     }
+
+    fun isStationLiked(stationId: String): Flow<Boolean> =
+        stationRepository.isStationLiked(stationId)
+            .catch { e ->
+                _error.postValue("Error checking if station is liked: ${e.message}")
+                emit(false)
+            }
 
     fun clearError() {
         _error.value = null

@@ -21,7 +21,7 @@
             android:src="@drawable/ic_arrow_back" />
 
         <TextView
-            android:id="@+id/toolbarTitle"
+            android:id="@+id/stationName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -31,21 +31,29 @@
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-    <TextView
-        android:id="@+id/stationName"
+    <ImageView
+        android:id="@+id/stationImage"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Station Name"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        tools:text="Station Name" />
+        tools:src="@drawable/ic_missing_image" />
+
+    <TextView
+        android:id="@+id/likesCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/stationImage"
+        tools:text="123 Likes" />
 
     <LinearLayout
         android:id="@+id/commentsContainer"
@@ -58,7 +66,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/stationName"
+        app:layout_constraintTop_toBottomOf="@id/likesCount"
         tools:background="#EEEEEE">
 
         <!-- Comments will be added here programmatically -->

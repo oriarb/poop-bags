@@ -1,9 +1,5 @@
-package com.final_project.poop_bags.models
+package com.final_project.poop_bags.models.firebase
 
-import com.final_project.poop_bags.models.firebase.FirebaseAuthService
-import com.final_project.poop_bags.models.firebase.FirebaseUserService
-import com.final_project.poop_bags.models.firebase.FirebaseStationService
-import com.final_project.poop_bags.models.firebase.FirebaseInteractionService
 import javax.inject.Inject
 import javax.inject.Singleton
 

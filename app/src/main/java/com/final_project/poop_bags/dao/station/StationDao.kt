@@ -15,6 +15,21 @@ interface StationDao {
     
     @Query("SELECT * FROM stations WHERE id = :stationId")
     suspend fun getStationById(stationId: String): Station?
+
+    @Query("DELETE FROM stations WHERE id = :stationId")
+    suspend fun deleteStation(stationId: String)
+
+    @Query("SELECT * FROM stations WHERE owner = :ownerId")
+    fun getUserStations(ownerId: String): Flow<List<Station>>
+
+    @Query("UPDATE stations SET isFavorite = :isFavorite WHERE id = :stationId")
+    suspend fun updateFavoriteStatus(stationId: String, isFavorite: Boolean)
+
+    @Query("SELECT * FROM stations WHERE id IN (:stationIds)")
+    suspend fun getStationsByIds(stationIds: List<String>): List<Station>
+
+    @Query("DELETE FROM stations")
+    suspend fun deleteAllStations()
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStation(station: Station)
@@ -24,20 +39,4 @@ interface StationDao {
     
     @Update
     suspend fun updateStation(station: Station)
-    
-    @Query("DELETE FROM stations WHERE id = :stationId")
-    suspend fun deleteStation(stationId: String)
-    
-    @Query("SELECT * FROM stations WHERE owner = :ownerId")
-    fun getUserStations(ownerId: String): Flow<List<Station>>
-    
-    @Query("UPDATE stations SET isFavorite = :isFavorite WHERE id = :stationId")
-    suspend fun updateFavoriteStatus(stationId: String, isFavorite: Boolean)
-
-    @Query("SELECT * FROM stations WHERE id IN (:stationIds)")
-    suspend fun getStationsByIds(stationIds: List<String>): List<Station>
-
-    @Query("DELETE FROM stations")
-    suspend fun deleteAllStations()
-
-} 
+}

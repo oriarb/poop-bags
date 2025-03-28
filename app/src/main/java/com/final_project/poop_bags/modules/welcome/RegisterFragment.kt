@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.final_project.poop_bags.MainActivity
 import com.final_project.poop_bags.databinding.FragmentRegisterBinding
-import com.final_project.poop_bags.models.FirebaseModel
+import com.final_project.poop_bags.models.firebase.FirebaseModel
 import com.final_project.poop_bags.repository.UserRepository
 import kotlinx.coroutines.launch
 import dagger.hilt.android.AndroidEntryPoint

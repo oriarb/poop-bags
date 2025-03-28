@@ -9,7 +9,6 @@ import com.final_project.poop_bags.dao.station.StationDao
 import com.final_project.poop_bags.models.Station
 import com.final_project.poop_bags.utils.Converters
 
-
 @Database(
     entities = [
         User::class,

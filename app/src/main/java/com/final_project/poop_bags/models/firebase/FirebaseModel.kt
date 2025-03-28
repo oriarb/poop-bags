@@ -1,9 +1,5 @@
-package com.final_project.poop_bags.models
+package com.final_project.poop_bags.models.firebase
 
-import com.final_project.poop_bags.models.firebase.FirebaseAuthService
-import com.final_project.poop_bags.models.firebase.FirebaseUserService
-import com.final_project.poop_bags.models.firebase.FirebaseStationService
-import com.final_project.poop_bags.models.firebase.FirebaseInteractionService
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,10 +30,8 @@ class FirebaseModel @Inject constructor(
     suspend fun updateStation(stationId: String, name: String, image: String, latitude: Double, longitude: Double) = 
         stationService.updateStation(stationId, name, image, latitude, longitude)
     suspend fun deleteStation(stationId: String) = stationService.deleteStation(stationId)
-    suspend fun getStation(stationId: String) = stationService.getStation(stationId)
     suspend fun getAllStations() = stationService.getAllStations()
-    suspend fun getUserStations(userId: String) = stationService.getUserStations(userId)
-    
+
     suspend fun toggleLike(stationId: String, userId: String) = 
         interactionService.toggleLike(stationId, userId)
     suspend fun addComment(stationId: String, userId: String, text: String) = 

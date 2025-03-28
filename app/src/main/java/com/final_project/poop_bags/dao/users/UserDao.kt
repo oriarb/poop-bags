@@ -11,9 +11,6 @@ interface UserDao {
     @Query("SELECT * FROM users LIMIT 1")
     suspend fun getUserProfile(): User?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserProfile(user: User)
-
     @Query("DELETE FROM users")
     suspend fun deleteAll()
 
@@ -25,4 +22,7 @@ interface UserDao {
     
     @Query("UPDATE users SET favorites = :favorites WHERE id = :userId")
     suspend fun updateFavorites(userId: String, favorites: List<String>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUserProfile(user: User)
 } 

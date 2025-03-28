@@ -4,7 +4,7 @@ import com.final_project.poop_bags.models.firebase.FirebaseAuthService
 import com.final_project.poop_bags.models.firebase.FirebaseUserService
 import com.final_project.poop_bags.models.firebase.FirebaseStationService
 import com.final_project.poop_bags.models.firebase.FirebaseInteractionService
-import com.final_project.poop_bags.models.FirebaseModel
+import com.final_project.poop_bags.models.firebase.FirebaseModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

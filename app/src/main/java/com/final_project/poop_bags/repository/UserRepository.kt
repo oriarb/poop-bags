@@ -1,10 +1,8 @@
 package com.final_project.poop_bags.repository
 
-import android.net.Uri
 import com.final_project.poop_bags.dao.users.UserDao
-import com.final_project.poop_bags.models.FirebaseModel
+import com.final_project.poop_bags.models.firebase.FirebaseModel
 import com.final_project.poop_bags.models.User
-import com.final_project.poop_bags.utils.CloudinaryService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

@@ -115,7 +115,7 @@ class StationDetailsFragment : Fragment() {
         context?.let {
             Glide.with(it)
                 .load(station.imageUrl)
-                .transform(CenterCrop(), RoundedCorners(16)) // 16dp radius
+                .transform(CenterCrop(), RoundedCorners(16))
                 .placeholder(android.R.drawable.ic_menu_gallery)
                 .error(android.R.drawable.ic_menu_gallery)
                 .into(binding.stationImage)
@@ -169,7 +169,6 @@ class StationDetailsFragment : Fragment() {
         binding.commentsContainer.removeAllViews()
 
         comments.forEach { comment ->
-            // For each comment, fetch the user info
             viewModel.fetchUser(comment.userId) { user ->
                 val commentLayout = LinearLayout(requireContext()).apply {
                     layoutParams = LinearLayout.LayoutParams(
@@ -188,8 +187,8 @@ class StationDetailsFragment : Fragment() {
                         marginEnd = 32
                     }
                     Glide.with(this@StationDetailsFragment)
-                        .load(user?.image) // Assuming the User model has a 'profileImageUrl' field
-                        .circleCrop()  // Makes the image round
+                        .load(user?.image)
+                        .circleCrop()
                         .placeholder(R.drawable.default_profile)
                         .into(this)
                 }

@@ -12,11 +12,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.final_project.poop_bags.R
 import com.final_project.poop_bags.databinding.FragmentStationDetailsBinding
 import com.final_project.poop_bags.models.Comment
 import com.final_project.poop_bags.models.Station
-import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,6 +31,7 @@ class StationDetailsFragment : Fragment() {
     private var _binding: FragmentStationDetailsBinding? = null
     private val binding get() = _binding!!
     private val viewModel: StationDetailsViewModel by viewModels()
+    private var isLiked: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,7 +72,6 @@ class StationDetailsFragment : Fragment() {
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            // Show/hide loading indicator
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
@@ -81,18 +83,40 @@ class StationDetailsFragment : Fragment() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun updateUI(station: Station) {
         binding.stationName.text = station.name
-        binding.likesCount.text = "${station.likes.size} Likes"
+        context?.let {
+            Glide.with(it)
+                .load(station.imageUrl)
+                .transform(CenterCrop(), RoundedCorners(16)) // 16dp radius
+                .placeholder(android.R.drawable.ic_menu_gallery)
+                .error(android.R.drawable.ic_menu_gallery)
+                .into(binding.stationImage)
+        }
 
-        Picasso.get()
-            .load(station.imageUrl)
-            .placeholder(R.drawable.ic_missing_image)
-            .error(R.drawable.ic_missing_image)
-            .into(binding.stationImage)
-
+        setupLikes(station)
         displayComments(station.comments)
+    }
+
+    private fun setupLikes(station: Station) {
+        binding.likesContainer.apply {
+            background = ContextCompat.getDrawable(requireContext(), R.drawable.rounded_bottom_nav)
+            setOnClickListener {
+                isLiked = !isLiked
+                updateLikesUI(station)
+            }
+        }
+        updateLikesUI(station)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateLikesUI(station: Station) {
+        binding.likesCount.text = station.likes.size.toString()
+        if (isLiked) {
+            binding.heartIcon.setImageResource(R.drawable.ic_heart_filled)
+        } else {
+            binding.heartIcon.setImageResource(R.drawable.ic_heart_outline)
+        }
     }
 
     private fun displayComments(comments: List<Comment>) {

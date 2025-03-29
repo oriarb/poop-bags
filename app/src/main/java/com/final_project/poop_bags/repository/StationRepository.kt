@@ -21,7 +21,14 @@ class StationRepository @Inject constructor(
     private val firebaseModel: FirebaseModel
 ) {
 
-    val allStations: Flow<List<Station>> = stationDao.getAllStations()
+    fun getStations(): Flow<List<Station>> = flow {
+        try {
+            refreshStationsFromFirebase()
+        } catch (e: Exception) {
+            Log.e("StationRepository", "Failed to fetch stations from Firebase", e)
+        }
+        emit(stationDao.getAllStations().first())
+    }.flowOn(Dispatchers.IO)
 
     fun getFavoriteStations(): Flow<List<Station>> = flow {
         val favoriteIds = userRepository.getUserFavorites()

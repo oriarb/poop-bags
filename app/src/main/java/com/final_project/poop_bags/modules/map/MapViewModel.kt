@@ -9,8 +9,7 @@ import com.final_project.poop_bags.models.Station
 import com.final_project.poop_bags.repository.StationRepository
 import com.final_project.poop_bags.utils.LocationUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,11 +17,7 @@ import javax.inject.Inject
 class MapViewModel @Inject constructor(private val locationUtil: LocationUtil, private val stationRepository: StationRepository
 ): ViewModel() {
 
-    val stations = stationRepository.allStations.stateIn(
-        viewModelScope,
-        SharingStarted.Lazily,
-        emptyList()
-    )
+    val stations: Flow<List<Station>> = stationRepository.getStations()
 
     private val _selectedStation = MutableLiveData<Station?>()
     val selectedStation: LiveData<Station?> = _selectedStation

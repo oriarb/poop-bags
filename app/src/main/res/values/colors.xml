@@ -12,6 +12,7 @@
     <color name="light_gray_background">#303030</color>
     <color name="dark_input_background">#484848</color>
     <color name="yellow">#FFEB3B</color>
+    <color name="red">#FF0000</color>
     <color name="light_gray">#CCCCCC</color>
     <color name="dark_background">#333333</color>
     <color name="button_light_background">#FFFFFF</color>

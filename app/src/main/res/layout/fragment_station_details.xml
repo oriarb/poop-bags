@@ -35,15 +35,15 @@
         android:id="@+id/stationImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:contentDescription="@string/station_image"
-        android:layout_marginTop="16dp"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/station_image"
         android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@id/likesContainer"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toTopOf="@id/likesContainer"
         app:shapeAppearanceOverlay="@style/CircleImageView"
         tools:src="@drawable/ic_missing_image" />
 
@@ -51,22 +51,22 @@
         android:id="@+id/likesContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginHorizontal="16dp"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_bottom_nav"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/stationImage"
-        android:background="@drawable/rounded_bottom_nav">
+        app:layout_constraintTop_toBottomOf="@id/stationImage">
 
         <ImageView
             android:id="@+id/heartIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/like_icon"
-            app:tint="@color/red"/>
+            app:tint="@color/red" />
 
         <TextView
             android:id="@+id/likesCount"
@@ -82,22 +82,22 @@
         android:id="@+id/favouriteContainer"
         android:layout_width="wrap_content"
         android:layout_height="38dp"
-        android:layout_marginTop="16dp"
         android:layout_marginHorizontal="16dp"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_bottom_nav"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
         app:layout_constraintStart_toEndOf="@id/likesContainer"
-        app:layout_constraintTop_toBottomOf="@id/stationImage"
-        android:background="@drawable/rounded_bottom_nav">
+        app:layout_constraintTop_toBottomOf="@id/stationImage">
 
         <ImageView
             android:id="@+id/starIcon"
             android:layout_width="wrap_content"
             android:layout_height="38dp"
             android:contentDescription="@string/star_icon"
-            app:tint="@color/yellow"/>
+            app:tint="@color/yellow" />
     </LinearLayout>
 
     <ScrollView
@@ -113,13 +113,59 @@
             android:id="@+id/commentsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginHorizontal="16dp"
+            android:orientation="vertical"
             android:padding="16dp"
             tools:background="#EEEEEE">
 
+            <!-- Comments will be added here dynamically -->
+
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/commentInputContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_comment_input"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/currentUserImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/comment_user_image"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_profile" />
+
+        <EditText
+            android:id="@+id/commentInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="@string/comment_input_hint"
+            android:inputType="text"
+            android:padding="8dp" />
+
+        <ImageButton
+            android:id="@+id/sendCommentBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/send_comment"
+            android:src="@drawable/ic_send" />
+
+    </LinearLayout>
+
 
     <ProgressBar
         android:id="@+id/progressBar"

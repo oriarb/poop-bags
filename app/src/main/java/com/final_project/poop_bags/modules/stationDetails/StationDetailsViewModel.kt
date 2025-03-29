@@ -33,6 +33,9 @@ class StationDetailsViewModel @Inject constructor(
     private val _isStationFavourite = MutableLiveData<Boolean>()
     val isStationFavourite: LiveData<Boolean> = _isStationFavourite
 
+    private val _currentUser = MutableLiveData<User>()
+    val currentUser: LiveData<User> = _currentUser
+
     fun fetchStation(stationId: String) {
         _isLoading.value = true
         viewModelScope.launch {
@@ -49,6 +52,34 @@ class StationDetailsViewModel @Inject constructor(
                 _error.value = "Error fetching station: ${e.message}"
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun getCurrentUser() {
+        viewModelScope.launch {
+            try {
+                val user: User = userRepository.getUserProfile()
+                _currentUser.value = user
+            } catch (e: Exception) {
+                _error.value = "Error fetching user: ${e.message}"
+            }
+        }
+    }
+
+    fun addComment(comment: String) {
+        viewModelScope.launch {
+            try {
+                val stationId = _station.value?.id
+                if (stationId != null) {
+                    stationRepository.addComment(stationId, comment)
+                    val updatedStation = stationRepository.getStationById(stationId)
+                    _station.value = updatedStation
+                } else {
+                    _error.value = "Station ID is null"
+                }
+            } catch (e: Exception) {
+                _error.value = "Error adding comment: ${e.message}"
             }
         }
     }

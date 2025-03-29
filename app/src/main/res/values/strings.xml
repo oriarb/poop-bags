@@ -69,4 +69,6 @@
     <string name="station_details">Station Details</string>
     <string name="like_icon">Like Icon</string>
     <string name="star_icon">Star Icon</string>
+    <string name="comment_input_hint">Add a comment…</string>
+    <string name="send_comment">Send Comment</string>
 </resources>

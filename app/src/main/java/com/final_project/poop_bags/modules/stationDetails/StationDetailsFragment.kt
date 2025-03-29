@@ -51,6 +51,7 @@ class StationDetailsFragment : Fragment() {
 
         if (stationId != null) {
             viewModel.fetchStation(stationId)
+            viewModel.getCurrentUser()
         } else {
             Toast.makeText(requireContext(), "Station ID is missing", Toast.LENGTH_SHORT).show()
             findNavController().navigateUp()
@@ -64,6 +65,14 @@ class StationDetailsFragment : Fragment() {
     private fun setupUI() {
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
+        }
+
+        binding.sendCommentBtn.setOnClickListener {
+            val comment = binding.commentInput.text.toString()
+            if (comment.isNotEmpty()) {
+                viewModel.addComment(comment)
+                binding.commentInput.text.clear()
+            }
         }
     }
 
@@ -82,6 +91,19 @@ class StationDetailsFragment : Fragment() {
             if (error != null) {
                 Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
                 viewModel.clearError()
+            }
+        }
+
+        viewModel.currentUser.observe(viewLifecycleOwner) { currentUser ->
+            if (currentUser != null) {
+                context?.let {
+                    Glide.with(it)
+                        .load(currentUser.image)
+                        .transform(CenterCrop(), RoundedCorners(100))
+                        .placeholder(android.R.drawable.ic_menu_gallery)
+                        .error(android.R.drawable.ic_menu_gallery)
+                        .into(binding.currentUserImage)
+                }
             }
         }
     }
@@ -153,7 +175,12 @@ class StationDetailsFragment : Fragment() {
                     setMargins(0, 0, 0, 8) // Add some bottom margin between comments
                 }
                 orientation = LinearLayout.VERTICAL
-                setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.comment_background))
+                setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.comment_background
+                    )
+                )
                 setPadding(16, 16, 16, 16) // Add padding inside the comment
             }
 

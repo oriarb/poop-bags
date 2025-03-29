@@ -32,6 +32,7 @@ class StationDetailsFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: StationDetailsViewModel by viewModels()
     private var isLiked: Boolean = false
+    private var isFavourite: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -94,7 +95,9 @@ class StationDetailsFragment : Fragment() {
                 .into(binding.stationImage)
         }
         isLiked = viewModel.isStationLiked.value ?: false
+        isFavourite = viewModel.isStationFavourite.value ?: false
         setupLikes(station)
+        setupFavourite(station)
         displayComments(station.comments)
     }
 
@@ -108,6 +111,16 @@ class StationDetailsFragment : Fragment() {
         updateLikesUI(station)
     }
 
+    private fun setupFavourite(station: Station) {
+        binding.favouriteContainer.apply {
+            setOnClickListener {
+                viewModel.toggleFavorite(station.id)
+                updateFavouriteUI()
+            }
+        }
+        updateFavouriteUI()
+    }
+
     @SuppressLint("SetTextI18n")
     private fun updateLikesUI(station: Station) {
         binding.likesCount.text = station.likes.size.toString()
@@ -115,6 +128,14 @@ class StationDetailsFragment : Fragment() {
             binding.heartIcon.setImageResource(R.drawable.ic_heart_filled)
         } else {
             binding.heartIcon.setImageResource(R.drawable.ic_heart_outline)
+        }
+    }
+
+    private fun updateFavouriteUI() {
+        if (isFavourite) {
+            binding.starIcon.setImageResource(R.drawable.ic_star_filled)
+        } else {
+            binding.starIcon.setImageResource(R.drawable.ic_star_outline)
         }
     }
 

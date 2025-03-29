@@ -37,7 +37,7 @@ class StationRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             val currentProfile = userRepository.getUserProfile()
             val favorites = currentProfile.favorites.toMutableList()
-            
+
             if (stationId in favorites) {
                 stationDao.updateFavoriteStatus(stationId, false)
                 userRepository.removeFromFavorites(stationId)
@@ -48,20 +48,25 @@ class StationRepository @Inject constructor(
         }
     }
 
-    suspend fun addStation(name: String, imageUrl: String, latitude: Double, longitude: Double): String {
+    suspend fun addStation(
+        name: String,
+        imageUrl: String,
+        latitude: Double,
+        longitude: Double
+    ): String {
         return withContext(Dispatchers.IO) {
             try {
                 val currentUserId = userRepository.getCurrentUserId()
-                
+
                 val stationId = firebaseModel.addStation(
                     name = name,
                     image = imageUrl,
                     latitude = latitude,
                     longitude = longitude
                 )
-                
+
                 val finalStationId = stationId.ifBlank { generateStationId() }
-                
+
                 val newStation = Station(
                     id = finalStationId,
                     name = name,
@@ -74,7 +79,7 @@ class StationRepository @Inject constructor(
                     isFavorite = false
                 )
                 stationDao.insertStation(newStation)
-                
+
                 finalStationId
             } catch (e: Exception) {
                 Log.e("StationRepository", "Failed to add station", e)
@@ -95,8 +100,11 @@ class StationRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             try {
                 val success = firebaseModel.deleteStation(stationId)
-                Log.d("StationRepository", "Firebase delete result: $success for station $stationId")
-                
+                Log.d(
+                    "StationRepository",
+                    "Firebase delete result: $success for station $stationId"
+                )
+
                 stationDao.deleteStation(stationId)
             } catch (e: Exception) {
                 Log.e("StationRepository", "Failed to delete station", e)
@@ -110,26 +118,32 @@ class StationRepository @Inject constructor(
             try {
                 val userId = userRepository.getCurrentUserId()
                 val station = stationDao.getStationById(stationId)
-                
+
                 station?.let {
                     val currentLikes = it.likes.toMutableList()
                     val isLiked = userId in currentLikes
-                    
+
                     if (isLiked) {
                         currentLikes.remove(userId)
                     } else {
                         currentLikes.add(userId)
                     }
-                    
+
                     val updatedStation = it.copy(likes = currentLikes)
                     stationDao.updateStation(updatedStation)
-                    
+
                     val firebaseResult = firebaseModel.toggleLike(stationId, userId)
-                    
+
                     if (firebaseResult) {
-                        Log.d("StationRepository", "Successfully toggled like in Firebase for station: $stationId")
+                        Log.d(
+                            "StationRepository",
+                            "Successfully toggled like in Firebase for station: $stationId"
+                        )
                     } else {
-                        Log.w("StationRepository", "Firebase like toggle failed, but local DB updated for station: $stationId")
+                        Log.w(
+                            "StationRepository",
+                            "Firebase like toggle failed, but local DB updated for station: $stationId"
+                        )
                     }
                 } ?: run {
                     Log.e("StationRepository", "Cannot toggle like - station not found: $stationId")
@@ -141,11 +155,17 @@ class StationRepository @Inject constructor(
             }
         }
     }
-    
+
     fun isStationLiked(stationId: String): Flow<Boolean> = flow {
         val station = stationDao.getStationById(stationId)
         val userId = userRepository.getCurrentUserId()
         emit(station?.likes?.contains(userId) == true)
+    }.flowOn(Dispatchers.IO)
+
+    fun isStationFavourite(stationId: String): Flow<Boolean> = flow {
+        val currentProfile = userRepository.getUserProfile()
+        val favorites = currentProfile.favorites.toMutableList()
+        emit(stationId in favorites)
     }.flowOn(Dispatchers.IO)
 
     suspend fun addComment(stationId: String, text: String) {
@@ -173,11 +193,17 @@ class StationRepository @Inject constructor(
         }
     }
 
-    suspend fun updateStation(stationId: String, name: String, imageUrl: String, latitude: Double, longitude: Double) {
+    suspend fun updateStation(
+        stationId: String,
+        name: String,
+        imageUrl: String,
+        latitude: Double,
+        longitude: Double
+    ) {
         withContext(Dispatchers.IO) {
             try {
                 val currentStation = stationDao.getStationById(stationId)
-                
+
                 if (currentStation != null) {
                     val success = firebaseModel.updateStation(
                         stationId = stationId,
@@ -186,9 +212,12 @@ class StationRepository @Inject constructor(
                         latitude = latitude,
                         longitude = longitude
                     )
-                    
-                    Log.d("StationRepository", "Firebase update result: $success for station $stationId")
-                    
+
+                    Log.d(
+                        "StationRepository",
+                        "Firebase update result: $success for station $stationId"
+                    )
+
                     val updatedStation = currentStation.copy(
                         name = name,
                         imageUrl = imageUrl,
@@ -217,14 +246,14 @@ class StationRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             try {
                 val favorites = userRepository.getUserFavorites()
-                
+
                 val stationsList = try {
                     stationDao.getAllStations().first()
                 } catch (e: Exception) {
                     Log.e("StationRepository", "Failed to get stations, using empty list", e)
                     emptyList()
                 }
-                
+
                 stationsList.forEach { station ->
                     try {
                         val isFavorite = favorites.contains(station.id)
@@ -247,7 +276,7 @@ class StationRepository @Inject constructor(
             try {
                 val stations = firebaseModel.getAllStations()
                 val userFavorites = userRepository.getUserFavorites()
-                
+
                 val localStations = stations.map { stationData ->
                     Station(
                         id = stationData["id"] as String,
@@ -257,14 +286,16 @@ class StationRepository @Inject constructor(
                         latitude = stationData["latitude"] as Double,
                         longitude = stationData["longitude"] as Double,
                         likes = (stationData["likes"] as? List<String>) ?: emptyList(),
-                        comments = parseComments(stationData["comments"] as? List<Map<String, Any>> ?: emptyList()),
+                        comments = parseComments(
+                            stationData["comments"] as? List<Map<String, Any>> ?: emptyList()
+                        ),
                         isFavorite = userFavorites.contains(stationData["id"] as String)
                     )
                 }
-                
+
                 stationDao.deleteAllStations()
                 stationDao.insertStations(localStations)
-                
+
                 Log.d("StationRepository", "Refreshed ${localStations.size} stations from Firebase")
             } catch (e: Exception) {
                 Log.e("StationRepository", "Failed to refresh stations from Firebase", e)

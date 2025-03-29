@@ -30,6 +30,9 @@ class StationDetailsViewModel @Inject constructor(
     private val _isStationLiked = MutableLiveData<Boolean>()
     val isStationLiked: LiveData<Boolean> = _isStationLiked
 
+    private val _isStationFavourite = MutableLiveData<Boolean>()
+    val isStationFavourite: LiveData<Boolean> = _isStationFavourite
+
     fun fetchStation(stationId: String) {
         _isLoading.value = true
         viewModelScope.launch {
@@ -37,6 +40,9 @@ class StationDetailsViewModel @Inject constructor(
                 val fetchedStation = stationRepository.getStationById(stationId)
                 stationRepository.isStationLiked(stationId).collect {
                     _isStationLiked.value = it
+                }
+                stationRepository.isStationFavourite(stationId).collect {
+                    _isStationFavourite.value = it
                 }
                 _station.value = fetchedStation
             } catch (e: Exception) {
@@ -80,4 +86,20 @@ class StationDetailsViewModel @Inject constructor(
             }
         }
     }
+
+    fun toggleFavorite(stationId: String) {
+        viewModelScope.launch {
+            try {
+                stationRepository.toggleFavorite(stationId)
+                stationRepository.isStationFavourite(stationId).collect {
+                    _isStationFavourite.value = it
+                }
+                val updatedStation = stationRepository.getStationById(stationId)
+                _station.value = updatedStation
+            } catch (e: Exception) {
+                _error.value = "Error toggling favorite: ${e.message}"
+            }
+        }
+    }
+
 }

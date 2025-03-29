@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 interface StationDao {
     @Query("SELECT * FROM stations")
     fun getAllStations(): Flow<List<Station>>
-    
+
     @Query("SELECT * FROM stations WHERE id = :stationId")
     suspend fun getStationById(stationId: String): Station?
 
@@ -35,8 +35,11 @@ interface StationDao {
     suspend fun insertStation(station: Station)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertStation(station: Station)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStations(stations: List<Station>)
-    
+
     @Update
     suspend fun updateStation(station: Station)
 }

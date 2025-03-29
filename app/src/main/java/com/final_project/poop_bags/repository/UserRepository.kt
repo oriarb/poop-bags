@@ -19,6 +19,30 @@ class UserRepository @Inject constructor(
         }
     }
 
+    suspend fun getUserById(userId: String): User? {
+        return withContext(Dispatchers.IO) {
+            var user: User? = null
+            try {
+                val userData = firebaseModel.getUserData(userId)
+                if (userData != null) {
+                    user = User(
+                        id = userId,
+                        username = userData["username"] as? String ?: "",
+                        email = userData["email"] as? String ?: "",
+                        password = "", // You might not store the password in Firebase
+                        image = userData["image"] as? String ?: "",
+                        favorites = (userData["favorites"] as? List<String>) ?: emptyList()
+                    )
+//                    userDao.insertUserProfile(user)
+                }
+            } catch (e: Exception) {
+                throw IllegalStateException("Failed to fetch user from Firebase", e)
+            }
+
+            user
+        }
+    }
+
     suspend fun updateProfilePicture(cloudinaryUrl: String) {
         withContext(Dispatchers.IO) {
             try {

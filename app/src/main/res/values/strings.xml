@@ -65,4 +65,10 @@
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="username_hint">Username</string>"
+    <string name="comment_user_image">User Image</string>
+    <string name="station_details">Station Details</string>
+    <string name="like_icon">Like Icon</string>
+    <string name="star_icon">Star Icon</string>
+    <string name="comment_input_hint">Add a comment…</string>
+    <string name="send_comment">Send Comment</string>
 </resources>

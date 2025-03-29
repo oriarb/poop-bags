@@ -12,9 +12,12 @@
     <color name="light_gray_background">#303030</color>
     <color name="dark_input_background">#484848</color>
     <color name="yellow">#FFEB3B</color>
+    <color name="red">#FF0000</color>
     <color name="light_gray">#CCCCCC</color>
     <color name="dark_background">#333333</color>
     <color name="button_light_background">#FFFFFF</color>
     <color name="button_dark_background">#555555</color>
     <color name="transparent_input_color">#7f7f7f</color>
+    <color name="comment_background">#C2C2C2</color>
+    <color name="transparent_background">#00000000</color>"
 </resources>

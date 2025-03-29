@@ -12,16 +12,16 @@ import kotlinx.coroutines.flow.Flow
 interface StationDao {
     @Query("SELECT * FROM stations")
     fun getAllStations(): Flow<List<Station>>
-    
+
     @Query("SELECT * FROM stations WHERE id = :stationId")
     suspend fun getStationById(stationId: String): Station?
 
     @Query("DELETE FROM stations WHERE id = :stationId")
     suspend fun deleteStation(stationId: String)
-    
+
     @Query("SELECT * FROM stations WHERE owner = :ownerId")
     fun getUserStations(ownerId: String): Flow<List<Station>>
-    
+
     @Query("UPDATE stations SET isFavorite = :isFavorite WHERE id = :stationId")
     suspend fun updateFavoriteStatus(stationId: String, isFavorite: Boolean)
 

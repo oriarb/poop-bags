@@ -30,6 +30,9 @@ interface StationDao {
 
     @Query("DELETE FROM stations")
     suspend fun deleteAllStations()
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertStation(station: Station)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStation(station: Station)

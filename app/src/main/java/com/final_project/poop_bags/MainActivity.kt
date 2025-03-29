@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.ui.setupWithNavController
 import com.final_project.poop_bags.databinding.ActivityMainBinding
-import com.final_project.poop_bags.models.FirebaseModel
+import com.final_project.poop_bags.models.firebase.FirebaseModel
 import com.final_project.poop_bags.repository.UserRepository
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,10 +22,10 @@ import com.final_project.poop_bags.modules.welcome.WelcomeActivity
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    
+
     @Inject
     lateinit var firebaseModel: FirebaseModel
-    
+
     @Inject
     lateinit var userRepository: UserRepository
 
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             finish()
             return
         }
-        
+
         syncUserDataFromFirebase()
 
         binding.root.post {

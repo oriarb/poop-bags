@@ -77,7 +77,20 @@
         android:id="@+id/favouritesFragment"
         android:name="com.final_project.poop_bags.modules.favorites.FavoritesFragment"
         android:label="@string/favourites"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites">
+        
+        <action
+            android:id="@+id/action_favouritesFragment_to_navigation_map"
+            app:destination="@id/navigation_map"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="false" />
+        
+        <action
+            android:id="@+id/action_favouritesFragment_to_navigation_stations"
+            app:destination="@id/navigation_stations"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="false" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_edit_station"

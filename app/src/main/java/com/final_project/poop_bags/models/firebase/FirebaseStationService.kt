@@ -72,22 +72,6 @@ class FirebaseStationService @Inject constructor(
             }
     }
 
-    suspend fun getStation(stationId: String): Map<String, Any>? = suspendCoroutine { continuation ->
-        firestore.collection("stations").document(stationId).get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    continuation.resume(document.data)
-                } else {
-                    Log.d(TAG, "getStation: no such station $stationId")
-                    continuation.resume(null)
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "getStation: failure for station $stationId", e)
-                continuation.resume(null)
-            }
-    }
-
     suspend fun getAllStations(): List<Map<String, Any>> = suspendCoroutine { continuation ->
         firestore.collection("stations").get()
             .addOnSuccessListener { documents ->
@@ -105,24 +89,4 @@ class FirebaseStationService @Inject constructor(
                 continuation.resume(emptyList())
             }
     }
-
-    suspend fun getUserStations(userId: String): List<Map<String, Any>> = suspendCoroutine { continuation ->
-        firestore.collection("stations")
-            .whereEqualTo("owner", userId)
-            .get()
-            .addOnSuccessListener { documents ->
-                val stationsList = mutableListOf<Map<String, Any>>()
-                for (document in documents) {
-                    document.data?.let { 
-                        stationsList.add(it)
-                    }
-                }
-                Log.d(TAG, "getUserStations: success, found ${stationsList.size} stations for user $userId")
-                continuation.resume(stationsList)
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "getUserStations: failure for user $userId", e)
-                continuation.resume(emptyList())
-            }
-    }
-} 
+}

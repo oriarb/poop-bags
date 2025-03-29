@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import android.util.Log
 import com.final_project.poop_bags.models.Comment
-import com.final_project.poop_bags.models.FirebaseModel
+import com.final_project.poop_bags.models.firebase.FirebaseModel
 import kotlinx.coroutines.flow.first
 
 @Singleton

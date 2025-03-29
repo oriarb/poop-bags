@@ -183,6 +183,8 @@ class StationRepository @Inject constructor(
                 val updatedComments = it.comments + newComment
                 val updatedStation = it.copy(comments = updatedComments)
                 stationDao.updateStation(updatedStation)
+
+                firebaseModel.addComment(stationId, userId, text)
             }
         }
     }

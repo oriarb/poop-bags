@@ -2,9 +2,11 @@ package com.final_project.poop_bags.modules.stationDetails
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -166,32 +168,46 @@ class StationDetailsFragment : Fragment() {
     private fun displayComments(comments: List<Comment>) {
         binding.commentsContainer.removeAllViews()
 
-        for (comment in comments) {
-            val commentLayout = LinearLayout(requireContext()).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    setMargins(0, 0, 0, 8) // Add some bottom margin between comments
+        comments.forEach { comment ->
+            // For each comment, fetch the user info
+            viewModel.fetchUser(comment.userId) { user ->
+                val commentLayout = LinearLayout(requireContext()).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        setMargins(0, 0, 0, 16)
+                    }
+                    orientation = LinearLayout.HORIZONTAL
+                    setBackgroundResource(R.drawable.comment_background)
+                    setPadding(16, 8, 16, 8)
                 }
-                orientation = LinearLayout.VERTICAL
-                setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.comment_background
-                    )
-                )
-                setPadding(16, 16, 16, 16) // Add padding inside the comment
-            }
 
-            val commentTextView = TextView(requireContext()).apply {
-                text = comment.text
-            }
+                val commentUserImage = ImageView(requireContext()).apply {
+                    layoutParams = LinearLayout.LayoutParams(100, 100).apply {
+                        marginEnd = 32
+                    }
+                    Glide.with(this@StationDetailsFragment)
+                        .load(user?.image) // Assuming the User model has a 'profileImageUrl' field
+                        .circleCrop()  // Makes the image round
+                        .placeholder(R.drawable.default_profile)
+                        .into(this)
+                }
 
-            commentLayout.addView(commentTextView)
-            binding.commentsContainer.addView(commentLayout)
+                val commentTextView = TextView(requireContext()).apply {
+                    text = comment.text
+                    setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                    textSize = 24f
+                    gravity = Gravity.START or Gravity.CENTER_VERTICAL
+                }
+
+                commentLayout.addView(commentUserImage)
+                commentLayout.addView(commentTextView)
+                binding.commentsContainer.addView(commentLayout)
+            }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -33,7 +33,7 @@ class UserRepository @Inject constructor(
                         image = userData["image"] as? String ?: "",
                         favorites = (userData["favorites"] as? List<String>) ?: emptyList()
                     )
-                    userDao.insertUserProfile(user)
+//                    userDao.insertUserProfile(user)
                 }
             } catch (e: Exception) {
                 throw IllegalStateException("Failed to fetch user from Firebase", e)

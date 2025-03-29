@@ -103,23 +103,20 @@
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/likesContainer">
+        app:layout_constraintTop_toBottomOf="@id/likesContainer"
+        app:layout_constraintBottom_toTopOf="@id/commentInputContainer">
 
         <LinearLayout
             android:id="@+id/commentsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
             android:orientation="vertical"
             android:padding="16dp"
             tools:background="#EEEEEE">
-
-            <!-- Comments will be added here dynamically -->
-
         </LinearLayout>
     </ScrollView>
 
@@ -165,7 +162,6 @@
             android:src="@drawable/ic_send" />
 
     </LinearLayout>
-
 
     <ProgressBar
         android:id="@+id/progressBar"

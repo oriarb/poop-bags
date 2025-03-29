@@ -100,7 +100,6 @@ class StationDetailsFragment : Fragment() {
 
     private fun setupLikes(station: Station) {
         binding.likesContainer.apply {
-            background = ContextCompat.getDrawable(requireContext(), R.drawable.rounded_bottom_nav)
             setOnClickListener {
                 isLiked = !isLiked
                 updateLikesUI(station)

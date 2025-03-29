@@ -15,16 +15,7 @@ interface StationDao {
     
     @Query("SELECT * FROM stations WHERE id = :stationId")
     suspend fun getStationById(stationId: String): Station?
-    
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertStation(station: Station)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertStations(stations: List<Station>)
-    
-    @Update
-    suspend fun updateStation(station: Station)
-    
     @Query("DELETE FROM stations WHERE id = :stationId")
     suspend fun deleteStation(stationId: String)
     
@@ -39,4 +30,13 @@ interface StationDao {
 
     @Query("DELETE FROM stations")
     suspend fun deleteAllStations()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertStation(station: Station)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertStations(stations: List<Station>)
+
+    @Update
+    suspend fun updateStation(station: Station)
 }

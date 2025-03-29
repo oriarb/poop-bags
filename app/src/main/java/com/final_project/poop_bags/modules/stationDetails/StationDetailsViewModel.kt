@@ -9,8 +9,6 @@ import com.final_project.poop_bags.models.User
 import com.final_project.poop_bags.repository.StationRepository
 import com.final_project.poop_bags.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,11 +27,17 @@ class StationDetailsViewModel @Inject constructor(
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
+    private val _isStationLiked = MutableLiveData<Boolean>()
+    val isStationLiked: LiveData<Boolean> = _isStationLiked
+
     fun fetchStation(stationId: String) {
         _isLoading.value = true
         viewModelScope.launch {
             try {
                 val fetchedStation = stationRepository.getStationById(stationId)
+                stationRepository.isStationLiked(stationId).collect {
+                    _isStationLiked.value = it
+                }
                 _station.value = fetchedStation
             } catch (e: Exception) {
                 _error.value = "Error fetching station: ${e.message}"
@@ -55,14 +59,25 @@ class StationDetailsViewModel @Inject constructor(
         }
     }
 
-    fun isStationLiked(stationId: String): Flow<Boolean> =
-        stationRepository.isStationLiked(stationId)
-            .catch { e ->
-                _error.postValue("Error checking if station is liked: ${e.message}")
-                emit(false)
-            }
-
     fun clearError() {
         _error.value = null
+    }
+
+    fun toggleLike(stationId: String) {
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                stationRepository.toggleLike(stationId)
+                stationRepository.isStationLiked(stationId).collect {
+                    _isStationLiked.value = it
+                }
+                val updatedStation = stationRepository.getStationById(stationId)
+                _station.value = updatedStation
+            } catch (e: Exception) {
+                _error.value = "Error toggling like: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 }

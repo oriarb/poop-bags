@@ -93,7 +93,7 @@ class StationDetailsFragment : Fragment() {
                 .error(android.R.drawable.ic_menu_gallery)
                 .into(binding.stationImage)
         }
-
+        isLiked = viewModel.isStationLiked.value ?: false
         setupLikes(station)
         displayComments(station.comments)
     }
@@ -101,7 +101,7 @@ class StationDetailsFragment : Fragment() {
     private fun setupLikes(station: Station) {
         binding.likesContainer.apply {
             setOnClickListener {
-                isLiked = !isLiked
+                viewModel.toggleLike(station.id)
                 updateLikesUI(station)
             }
         }

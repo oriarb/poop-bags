@@ -19,6 +19,7 @@ import com.final_project.poop_bags.R
 import com.final_project.poop_bags.databinding.FragmentStationDetailsBinding
 import com.final_project.poop_bags.models.Comment
 import com.final_project.poop_bags.models.Station
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -55,6 +56,7 @@ class StationDetailsFragment : Fragment() {
             findNavController().navigateUp()
         }
 
+        hideBottomNavBar()
         setupUI()
         setupObservers()
     }
@@ -166,6 +168,17 @@ class StationDetailsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        showBottomNavBar()
         _binding = null
+    }
+
+    private fun hideBottomNavBar() {
+        val bottomNavBar = activity?.findViewById<BottomNavigationView>(R.id.nav_view)
+        bottomNavBar?.visibility = View.GONE
+    }
+
+    private fun showBottomNavBar() {
+        val bottomNavBar = activity?.findViewById<BottomNavigationView>(R.id.nav_view)
+        bottomNavBar?.visibility = View.VISIBLE
     }
 }
